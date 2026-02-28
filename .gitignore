@@ -141,3 +141,5 @@ vite.config.ts.timestamp-*
 # Private notes
 AIRNODE_MASTER_ROADMAP.md
 modulo-0/**/*.md
+
+.DS_Store
