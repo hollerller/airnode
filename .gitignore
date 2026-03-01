@@ -143,3 +143,6 @@ AIRNODE_MASTER_ROADMAP.md
 modulo-0/**/*.md
 
 .DS_Store
+
+modulo-0/ts/*.j
+.vscode
