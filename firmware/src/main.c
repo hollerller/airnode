@@ -7,8 +7,8 @@
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 #define LED0_NODE DT_ALIAS(led0)
-
 #define SLEEP_TIME_S 5
+#define WAKE_INTERVAL_MS 10000
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 
@@ -32,20 +32,9 @@ int main(void)
 
         while (1)
         {
-                LOG_INF("Sleeping...");
-                ret = gpio_pin_toggle_dt(&led);
-                if (ret < 0)
-                {
-                        return 0;
-                }
-                k_sleep(K_SECONDS(SLEEP_TIME_S));
-                LOG_INF("Wake up!");
-
-                ret = gpio_pin_toggle_dt(&led);
-                if (ret < 0)
-                {
-                        return 0;
-                }
-                k_sleep(K_SECONDS(SLEEP_TIME_S));
+                uint32_t uptime = k_uptime_get_32();
+                LOG_INF("Wake up - uptime %u ms", uptime);
+                gpio_pin_toggle_dt(&led);
+                k_sleep(K_MSEC(WAKE_INTERVAL_MS));
         }
 }
