@@ -1,19 +1,19 @@
-#include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/drivers/i2c.h>
 
 LOG_MODULE_REGISTER(app, LOG_LEVEL_INF);
 
 #define LED0_NODE DT_ALIAS(led0)
 #define SLEEP_TIME_S 5
 #define WAKE_INTERVAL_MS 10000
+#define I2C_NODE DT_NODELABEL(bme680)
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 
 int main(void)
-
 {
         int ret;
 
