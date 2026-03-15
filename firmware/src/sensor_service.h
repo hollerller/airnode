@@ -16,6 +16,6 @@
 #define BT_UUID_SENSOR BT_UUID_DECLARE_128(BT_UUID_SENSOR_SERVICE_VAL)
 #define BT_UUID_SENSOR_DATA BT_UUID_DECLARE_128(BT_UUID_SENSOR_DATA_VAL)
 
-int mock_send_sensor_notify(uint32_t sensor_value);
+int temperature_send_sensor_notify(int32_t sensor_value);
 
 #endif // SENSOR_SERVICE_H

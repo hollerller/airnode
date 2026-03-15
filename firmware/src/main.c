@@ -20,22 +20,11 @@ struct sensor_value temp;
 struct sensor_value hum;
 struct sensor_value press;
 
-static uint8_t mock_data = 0;
-
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL),
 
     BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
-
-static void simulate_data(void)
-{
-        mock_data++;
-        if (mock_data > 100)
-        {
-                mock_data = 0;
-        }
-}
 
 int main(void)
 {
@@ -117,9 +106,7 @@ int main(void)
                         LOG_DBG("Pressure is %d,%d", press.val1, press.val2);
                 }
 
-                simulate_data();
-
-                mock_send_sensor_notify(mock_data);
+                temperature_send_sensor_notify(temp.val1);
 
                 gpio_pin_toggle_dt(&led);
                 k_sleep(K_MSEC(WAKE_INTERVAL_MS));
