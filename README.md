@@ -20,11 +20,12 @@ It is designed as a complete end-to-end IoT product — from embedded firmware t
 ## Features
 
 - 🌡️ Temperature, humidity and pressure (BME680)
-- 💨 PM1.0, PM2.5 and PM10 particulate matter (PMS5003)
+- 💨 PM1.0, PM2.5 and PM10 particulate matter (PMSA003I)
 - 📱 iOS and Android app — real-time dashboard, historical charts, device config
 - 🔵 BLE provisioning — connect and configure the device from the app
 - ☁️ MQTT data pipeline with cloud backend
 - 🔋 Ultra low-power design — target <50 µA average current
+- 🔧 Custom PCB hardware design (KiCad)
 - 🔄 OTA firmware updates
 
 ---
@@ -35,7 +36,7 @@ It is designed as a complete end-to-end IoT product — from embedded firmware t
 ┌─────────────────────────────────────────┐
 │              AIRNODE DEVICE             │
 │         nRF52840 + Zephyr RTOS          │
-│      BME680 (I2C) · PMS5003 (UART)      │
+│      BME680 (I2C) · PMSA003I (I2C)      │
 └──────────┬──────────────┬───────────────┘
            │ BLE          │ MQTT over WiFi
            ▼              ▼
@@ -54,7 +55,7 @@ It is designed as a complete end-to-end IoT product — from embedded firmware t
 | Layer          | Technology                                          |
 | -------------- | --------------------------------------------------- |
 | Firmware       | C/C++ · Zephyr RTOS · nRF Connect SDK               |
-| Protocols      | BLE 5.0 · MQTT · I2C · UART                         |
+| Protocols      | BLE 5.0 · MQTT · I2C                                |
 | Mobile         | React Native · TypeScript · Kotlin (native modules) |
 | Backend        | NestJS · PostgreSQL · InfluxDB · Redis              |
 | Broker         | EMQX Cloud                                          |
@@ -83,15 +84,16 @@ This project is currently in active development. Follow the progress through com
 
 | Phase            | Description                | Status         |
 | ---------------- | -------------------------- | -------------- |
-| Firmware Phase 1 | MCU Low Power              | 🔄 In progress |
-| Firmware Phase 2 | BME680 sensor              | ⚪ Pending     |
-| Firmware Phase 3 | BLE Minimal                | ⚪ Pending     |
-| Firmware Phase 4 | PMS5003 sensor             | ⚪ Pending     |
+| Firmware Phase 1 | MCU Low Power              | ✅ Complete    |
+| Firmware Phase 2 | BME680 sensor              | ✅ Complete    |
+| Firmware Phase 3 | BLE Minimal                | 🔄 In progress |
+| Firmware Phase 4 | PMSA003I sensor            | ⚪ Pending     |
 | Firmware Phase 5 | System Integration         | ⚪ Pending     |
 | Backend          | Auth + Device Registry     | ⚪ Pending     |
 | Mobile App       | Auth + BLE Provisioning    | ⚪ Pending     |
 | Data Pipeline    | MQTT + Real-time           | ⚪ Pending     |
 | MVP Demo         | End-to-end working product | ⚪ Pending     |
+| Hardware         | Custom PCB (KiCad)         | ⚪ Pending     |
 
 ---
 

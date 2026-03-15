@@ -4,6 +4,8 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
 
+#include "sensor_service.h"
+
 #define LED0_NODE DT_ALIAS(led0)
 #define WAKE_INTERVAL_MS 10000
 #define I2C_NODE DT_NODELABEL(bme680)
