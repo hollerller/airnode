@@ -1,10 +1,16 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/gap.h>
+
+#include "sensor_service.h"
 
 #define LED0_NODE DT_ALIAS(led0)
 #define WAKE_INTERVAL_MS 10000
 #define I2C_NODE DT_NODELABEL(bme680)
+#define DEVICE_NAME CONFIG_BT_DEVICE_NAME
+#define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 LOG_MODULE_REGISTER(airnode, LOG_LEVEL_DBG);
 
@@ -14,10 +20,30 @@ struct sensor_value temp;
 struct sensor_value hum;
 struct sensor_value press;
 
+static const struct bt_data ad[] = {
+    BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL),
+
+    BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
+};
+
 int main(void)
 {
         LOG_INF("BME680 sensor reading");
         int ret;
+
+        ret = bt_enable(NULL);
+        if (ret)
+        {
+                LOG_ERR("Bluetooth init failed (err %d)\n", ret);
+        }
+        LOG_INF("Bluetooth initialized\n");
+
+        ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ad, ARRAY_SIZE(ad), 0, 0);
+        if (ret)
+        {
+                LOG_ERR("Advertising failed to start (err %d)\n", ret);
+                return -1;
+        }
 
         if (!device_is_ready(dev_i2c))
         {
@@ -79,6 +105,8 @@ int main(void)
                 {
                         LOG_DBG("Pressure is %d,%d", press.val1, press.val2);
                 }
+
+                temperature_send_sensor_notify(temp.val1);
 
                 gpio_pin_toggle_dt(&led);
                 k_sleep(K_MSEC(WAKE_INTERVAL_MS));
