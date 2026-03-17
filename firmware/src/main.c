@@ -21,10 +21,10 @@ static const struct device *const dev_i2c = DEVICE_DT_GET(I2C_NODE);
 static const pmsa003i_config_t pmsa003i_config = {
     .i2c = I2C_DT_SPEC_GET(I2C_PMSA003I_NODE)};
 
-struct sensor_value temp;
-struct sensor_value hum;
-struct sensor_value press;
-pmsa003i_data_t pmsa003i_data_raw;
+static struct sensor_value temp;
+static struct sensor_value hum;
+static struct sensor_value press;
+static pmsa003i_data_t pmsa003i_data_raw;
 
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL),
@@ -36,11 +36,25 @@ int main(void)
 {
         int ret;
 
+        if (!device_is_ready(dev_i2c))
+        {
+                LOG_ERR("I2C bus for BME680 %s is not ready!", dev_i2c->name);
+                return -1;
+        }
+
+        ret = pmsa003i_init(&pmsa003i_config);
+        if (ret)
+        {
+                return -1;
+        }
+
         ret = bt_enable(NULL);
         if (ret)
         {
                 LOG_ERR("Bluetooth init failed (err %d)\n", ret);
+                return -1;
         }
+
         LOG_INF("Bluetooth initialized\n");
 
         ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ad, ARRAY_SIZE(ad), 0, 0);
@@ -50,23 +64,15 @@ int main(void)
                 return -1;
         }
 
-        ret = pmsa003i_init(&pmsa003i_config);
-
-        if (!device_is_ready(dev_i2c))
-        {
-                LOG_ERR("I2C bus %s is not ready!", dev_i2c->name);
-                return -1;
-        }
-
         if (!gpio_is_ready_dt(&led))
         {
-                return 0;
+                return -1;
         }
 
         ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
         if (ret < 0)
         {
-                return 0;
+                return -1;
         }
 
         while (1)

@@ -31,7 +31,7 @@ typedef struct
     uint16_t pm10_0; // PM10.0 concentration (µg/m³)
 } pmsa003i_data_t;
 
-int pmsa003i_init(pmsa003i_config_t *config);
-int pmsa003i_read(pmsa003i_config_t *config, pmsa003i_data_t *data);
+int pmsa003i_init(const pmsa003i_config_t *config);
+int pmsa003i_read(const pmsa003i_config_t *config, pmsa003i_data_t *data);
 
 #endif // PMSA003I_H

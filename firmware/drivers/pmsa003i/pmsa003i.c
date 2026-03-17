@@ -7,11 +7,11 @@ LOG_MODULE_REGISTER(pmsa003i, LOG_LEVEL_DBG);
 static uint8_t i2c_write_buffer[WRITE_BUFFER_SIZE] = {SENSOR_START_CHAR};
 static uint8_t i2c_read_buffer[READ_BUFFER_SIZE];
 
-int pmsa003i_init(pmsa003i_config_t *config)
+int pmsa003i_init(const pmsa003i_config_t *config)
 {
     if (!device_is_ready(config->i2c.bus))
     {
-        LOG_ERR("I2C bus %s is not ready!", config->i2c.bus);
+        LOG_ERR("I2C bus %s is not ready!", config->i2c.bus->name);
         return -1;
     }
 
@@ -28,7 +28,7 @@ static uint16_t calculate_checksum(uint8_t *buffer)
     return sum;
 }
 
-int pmsa003i_read(pmsa003i_config_t *config, pmsa003i_data_t *data)
+int pmsa003i_read(const pmsa003i_config_t *config, pmsa003i_data_t *data)
 {
     int ret;
     uint16_t checksum = 0;
@@ -43,7 +43,7 @@ int pmsa003i_read(pmsa003i_config_t *config, pmsa003i_data_t *data)
 
     checksum = calculate_checksum(i2c_read_buffer);
 
-    if ((checksum >> 8) != i2c_read_buffer[DATA_CHECK_HIGH] &&
+    if ((checksum >> 8) != i2c_read_buffer[DATA_CHECK_HIGH] ||
         (checksum & 0xff) != i2c_read_buffer[DATA_CHECK_LOW])
     {
         LOG_ERR("Data is corrupted");
