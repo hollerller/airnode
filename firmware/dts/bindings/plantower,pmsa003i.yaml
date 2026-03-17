@@ -1,0 +1,5 @@
+title: Digital universal partical concentration sensor PMSA003I (I2C)
+
+compatible: "plantower,pmsa003i"
+
+include: [sensor-device.yaml, i2c-device.yaml]

@@ -5,20 +5,26 @@
 #include <zephyr/bluetooth/gap.h>
 
 #include "sensor_service.h"
+#include "pmsa003i/pmsa003i.h"
 
 #define LED0_NODE DT_ALIAS(led0)
 #define WAKE_INTERVAL_MS 10000
 #define I2C_NODE DT_NODELABEL(bme680)
+#define I2C_PMSA003I_NODE DT_NODELABEL(pmsa003i)
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 LOG_MODULE_REGISTER(airnode, LOG_LEVEL_DBG);
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
-const struct device *const dev_i2c = DEVICE_DT_GET(I2C_NODE);
+static const struct device *const dev_i2c = DEVICE_DT_GET(I2C_NODE);
+static const pmsa003i_config_t pmsa003i_config = {
+    .i2c = I2C_DT_SPEC_GET(I2C_PMSA003I_NODE)};
+
 struct sensor_value temp;
 struct sensor_value hum;
 struct sensor_value press;
+pmsa003i_data_t pmsa003i_data_raw;
 
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL),
@@ -28,7 +34,6 @@ static const struct bt_data ad[] = {
 
 int main(void)
 {
-        LOG_INF("BME680 sensor reading");
         int ret;
 
         ret = bt_enable(NULL);
@@ -44,6 +49,8 @@ int main(void)
                 LOG_ERR("Advertising failed to start (err %d)\n", ret);
                 return -1;
         }
+
+        ret = pmsa003i_init(&pmsa003i_config);
 
         if (!device_is_ready(dev_i2c))
         {
@@ -107,6 +114,10 @@ int main(void)
                 }
 
                 temperature_send_sensor_notify(temp.val1);
+
+                pmsa003i_read(&pmsa003i_config, &pmsa003i_data_raw);
+
+                LOG_INF("data raw %d, %d, %d", pmsa003i_data_raw.pm1_0, pmsa003i_data_raw.pm2_5, pmsa003i_data_raw.pm10_0);
 
                 gpio_pin_toggle_dt(&led);
                 k_sleep(K_MSEC(WAKE_INTERVAL_MS));

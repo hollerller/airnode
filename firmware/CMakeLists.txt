@@ -5,3 +5,6 @@ project(firmware)
 
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/sensor_service.c)
+
+add_subdirectory(drivers)
+zephyr_include_directories(drivers)

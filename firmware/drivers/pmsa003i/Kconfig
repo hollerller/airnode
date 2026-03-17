@@ -1,0 +1,4 @@
+config PMSA003I 
+    bool "Activate PMSA003I driver"
+    default n  		
+    depends on I2C 
