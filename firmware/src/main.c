@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/sensor.h>
@@ -10,7 +12,6 @@
 #define RETRY_DELAY_MS 10000
 #define WARM_UP_INTERVAL_MS 10000
 #define WAKE_UP_INTERVAL 10000
-
 
 #define LED0_NODE DT_ALIAS(led0)
 #define I2C_NODE DT_NODELABEL(bme680)
@@ -29,6 +30,21 @@ static struct sensor_value temp;
 static struct sensor_value hum;
 static struct sensor_value press;
 static pmsa003i_data_t pmsa003i_data_raw;
+
+#define MASK_INT 0x03
+#define MASK_FLOAT 0x03
+
+struct airnode_readings
+{
+        int32_t temperature_c;
+        int32_t humidity_pct;
+        int32_t pressure_hpa;
+        uint16_t pm1_0_ugm3;
+        uint16_t pm2_5_ugm3;
+        uint16_t pm10_ugm3;
+};
+
+static struct airnode_readings full_reading;
 
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL),
@@ -107,7 +123,6 @@ int main(void)
                         }
                 }
 
-                
                 ret = sensor_channel_get(dev_i2c, SENSOR_CHAN_AMBIENT_TEMP, &temp);
 
                 if (ret < 0)
@@ -166,6 +181,21 @@ int main(void)
                 }
 
                 LOG_INF("data raw %d, %d, %d", pmsa003i_data_raw.pm1_0, pmsa003i_data_raw.pm2_5, pmsa003i_data_raw.pm10_0);
+
+                full_reading.temperature_c = temp.val1 * 100 + temp.val2 / 10000;
+                full_reading.humidity_pct = hum.val1 * 100 + hum.val2 / 10000;
+                full_reading.pressure_hpa = press.val1 * 100 + press.val2 / 10000;
+                full_reading.pm1_0_ugm3 = pmsa003i_data_raw.pm1_0;
+                full_reading.pm2_5_ugm3 = pmsa003i_data_raw.pm2_5;
+                full_reading.pm10_ugm3 = pmsa003i_data_raw.pm10_0;
+
+                LOG_DBG("Current reading:");
+                LOG_DBG("TEMP: %d.%d °C", (int32_t)full_reading.temperature_c / 100, (int32_t)full_reading.temperature_c % 100);
+                LOG_DBG("HUM: %d.%d %%", (int32_t)full_reading.humidity_pct / 100, (int32_t)full_reading.humidity_pct % 100);
+                LOG_DBG("PRESS: %d.%d hPa", (int32_t)full_reading.pressure_hpa / 100, (int32_t)full_reading.pressure_hpa % 100);
+                LOG_DBG("PM1.0: %d μg/m³", full_reading.pm1_0_ugm3);
+                LOG_DBG("PM2.5: %d μg/m³", full_reading.pm2_5_ugm3);
+                LOG_DBG("PM10: %d μg/m³", full_reading.pm10_ugm3);
 
                 gpio_pin_toggle_dt(&led);
                 k_sleep(K_MSEC(WAKE_UP_INTERVAL));
