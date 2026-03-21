@@ -28,6 +28,17 @@ static uint16_t calculate_checksum(uint8_t *buffer)
     return sum;
 }
 
+static uint16_t calculate_start_characters(uint8_t *start, uint8_t *end)
+{
+
+    if (START_CHARACTER_1 != *start || START_CHARACTER_2 != *end)
+    {
+        LOG_ERR("Init failed");
+        return -1;
+    }
+    return 0;
+};
+
 int pmsa003i_read(const pmsa003i_config_t *config, pmsa003i_data_t *data)
 {
     int ret;
@@ -38,6 +49,13 @@ int pmsa003i_read(const pmsa003i_config_t *config, pmsa003i_data_t *data)
     if (ret < 0)
     {
         LOG_ERR("Error reading pmsa003i data");
+        return -1;
+    }
+
+    ret = calculate_start_characters(&i2c_read_buffer[START_REG_1], &i2c_read_buffer[START_REG_2]);
+    if (ret < 0)
+    {
+        LOG_ERR("Error initializing device");
         return -1;
     }
 
