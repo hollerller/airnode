@@ -3,18 +3,18 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity()
 export class Reading {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
   @Column()
   deviceId: string;
   @Column()
   timestamp: Date;
   @Column()
   createdAt: Date;
-  @Column()
+  @Column('float')
   temperature_c: number;
-  @Column()
+  @Column('float')
   humidity_pct: number;
-  @Column()
+  @Column('float')
   pressure_hpa: number;
   @Column()
   pm1_0_ugm3: number;

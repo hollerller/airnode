@@ -2,22 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { Device } from './entities/device.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class DevicesService {
-  private tempDevices: Device[] = [
-    {
-      deviceId: 'airnode_00001',
-      deviceName: 'home',
-      firmwareVersion: '1.0.3',
-      batteryMv: 3100,
-      isOnline: true,
-      createdAt: new Date(2026, 3, 14, 10, 30, 0),
-      lastSeen: new Date(2025, 3, 21, 10, 24, 0),
-    },
-  ];
+  constructor(
+    @InjectRepository(Device)
+    private devicesRepository: Repository<Device>,
+  ) {}
 
-  create(createDeviceDto: CreateDeviceDto): Device {
+  async create(createDeviceDto: CreateDeviceDto): Promise<Device> {
     const newDevice: Device = {
       deviceId: createDeviceDto.deviceId,
       deviceName: createDeviceDto.deviceName,
@@ -28,13 +23,13 @@ export class DevicesService {
       lastSeen: new Date(),
     };
 
-    this.tempDevices.push(newDevice);
+    await this.devicesRepository.save(newDevice);
 
     return newDevice;
   }
 
-  findAll(): Device[] {
-    return this.tempDevices;
+  findAll(): Promise<Device[]> {
+    return this.devicesRepository.find();
   }
 
   findOne(id: number) {
