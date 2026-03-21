@@ -3,6 +3,26 @@
 
 #include <zephyr/bluetooth/uuid.h>
 
+struct airnode_readings
+{
+    int32_t temperature_c;
+    int32_t humidity_pct;
+    int32_t pressure_hpa;
+    uint16_t pm1_0_ugm3;
+    uint16_t pm2_5_ugm3;
+    uint16_t pm10_ugm3;
+};
+
+typedef enum
+{
+    TEMPERATURE,
+    HUMIDITY,
+    PRESSURE,
+    PM1_0,
+    PM2_5,
+    PM10
+} SensorDataType;
+
 /** Initial Service UUID - 4cff14aa-fca7-4da8-89d7-952ac08b3085 */
 #define BT_UUID_SENSOR_SERVICE_VAL \
     BT_UUID_128_ENCODE(0x4cff14aa, 0xfca7, 0x4da8, 0x89d7, 0x952ac08b3085)
@@ -16,6 +36,6 @@
 #define BT_UUID_SENSOR BT_UUID_DECLARE_128(BT_UUID_SENSOR_SERVICE_VAL)
 #define BT_UUID_SENSOR_DATA BT_UUID_DECLARE_128(BT_UUID_SENSOR_DATA_VAL)
 
-int temperature_send_sensor_notify(int32_t sensor_value);
+int send_sensor_notify(struct airnode_readings sensor_value, SensorDataType type);
 
 #endif // SENSOR_SERVICE_H

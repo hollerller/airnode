@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/sensor.h>
@@ -9,8 +11,7 @@
 
 #define RETRY_DELAY_MS 10000
 #define WARM_UP_INTERVAL_MS 10000
-#define WAKE_UP_INTERVAL 10000
-
+#define WAKE_UP_INTERVAL 300000
 
 #define LED0_NODE DT_ALIAS(led0)
 #define I2C_NODE DT_NODELABEL(bme680)
@@ -29,6 +30,8 @@ static struct sensor_value temp;
 static struct sensor_value hum;
 static struct sensor_value press;
 static pmsa003i_data_t pmsa003i_data_raw;
+
+static struct airnode_readings full_reading;
 
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, BT_LE_AD_GENERAL),
@@ -52,22 +55,6 @@ int main(void)
                 return -1;
         }
 
-        ret = bt_enable(NULL);
-        if (ret)
-        {
-                LOG_ERR("Bluetooth init failed (err %d)\n", ret);
-                return -1;
-        }
-
-        LOG_INF("Bluetooth initialized\n");
-
-        ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ad, ARRAY_SIZE(ad), 0, 0);
-        if (ret)
-        {
-                LOG_ERR("Advertising failed to start (err %d)\n", ret);
-                return -1;
-        }
-
         if (!gpio_is_ready_dt(&led))
         {
                 return -1;
@@ -84,6 +71,22 @@ int main(void)
         {
                 uint32_t uptime = k_uptime_get_32();
                 LOG_DBG("Wake up - uptime %u ms", uptime);
+
+                ret = bt_enable(NULL);
+                if (ret)
+                {
+                        LOG_ERR("Bluetooth init failed (err %d)\n", ret);
+                        return -1;
+                }
+
+                LOG_INF("Bluetooth initialized\n");
+
+                ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ad, ARRAY_SIZE(ad), 0, 0);
+                if (ret)
+                {
+                        LOG_ERR("Advertising failed to start (err %d)\n", ret);
+                        return -1;
+                }
 
                 ret = sensor_sample_fetch(dev_i2c);
 
@@ -107,7 +110,6 @@ int main(void)
                         }
                 }
 
-                
                 ret = sensor_channel_get(dev_i2c, SENSOR_CHAN_AMBIENT_TEMP, &temp);
 
                 if (ret < 0)
@@ -141,8 +143,6 @@ int main(void)
                         LOG_DBG("Pressure is %d,%d", press.val1, press.val2);
                 }
 
-                temperature_send_sensor_notify(temp.val1);
-
                 ret = pmsa003i_read(&pmsa003i_config, &pmsa003i_data_raw);
 
                 if (ret < 0)
@@ -167,7 +167,30 @@ int main(void)
 
                 LOG_INF("data raw %d, %d, %d", pmsa003i_data_raw.pm1_0, pmsa003i_data_raw.pm2_5, pmsa003i_data_raw.pm10_0);
 
+                full_reading.temperature_c = temp.val1 * 100 + temp.val2 / 10000;
+                full_reading.humidity_pct = hum.val1 * 100 + hum.val2 / 10000;
+                full_reading.pressure_hpa = press.val1 * 100 + press.val2 / 10000;
+                full_reading.pm1_0_ugm3 = pmsa003i_data_raw.pm1_0;
+                full_reading.pm2_5_ugm3 = pmsa003i_data_raw.pm2_5;
+                full_reading.pm10_ugm3 = pmsa003i_data_raw.pm10_0;
+
+                send_sensor_notify(full_reading, TEMPERATURE);
+                send_sensor_notify(full_reading, HUMIDITY);
+                send_sensor_notify(full_reading, PRESSURE);
+                send_sensor_notify(full_reading, PM1_0);
+                send_sensor_notify(full_reading, PM2_5);
+                send_sensor_notify(full_reading, PM10);
+
+                LOG_DBG("Current reading:");
+                LOG_DBG("TEMP: %d.%d °C", (int32_t)full_reading.temperature_c / 100, (int32_t)full_reading.temperature_c % 100);
+                LOG_DBG("HUM: %d.%d %%", (int32_t)full_reading.humidity_pct / 100, (int32_t)full_reading.humidity_pct % 100);
+                LOG_DBG("PRESS: %d.%d hPa", (int32_t)full_reading.pressure_hpa / 100, (int32_t)full_reading.pressure_hpa % 100);
+                LOG_DBG("PM1.0: %d μg/m³", full_reading.pm1_0_ugm3);
+                LOG_DBG("PM2.5: %d μg/m³", full_reading.pm2_5_ugm3);
+                LOG_DBG("PM10: %d μg/m³", full_reading.pm10_ugm3);
+
                 gpio_pin_toggle_dt(&led);
+                bt_disable();
                 k_sleep(K_MSEC(WAKE_UP_INTERVAL));
         }
 }

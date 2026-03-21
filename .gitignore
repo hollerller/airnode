@@ -142,6 +142,7 @@ vite.config.ts.timestamp-*
 AIRNODE_MASTER_ROADMAP.md
 modulo-0/docs/**/*.md
 firmware/docs/**/*.md
+!firmware/docs/fsm_airnode.md
 
 .DS_Store
 
