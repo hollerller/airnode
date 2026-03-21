@@ -20,3 +20,9 @@ services:
     image: 'influxdb'
     ports:
       - 8181:8181
+
+  emqx:
+    image: emqx/emqx
+    ports:
+      - 1883:1883
+      - 18083:18083
