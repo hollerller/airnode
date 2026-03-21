@@ -7,8 +7,12 @@
 #include "sensor_service.h"
 #include "pmsa003i/pmsa003i.h"
 
+#define RETRY_DELAY_MS 10000
+#define WARM_UP_INTERVAL_MS 10000
+#define WAKE_UP_INTERVAL 10000
+
+
 #define LED0_NODE DT_ALIAS(led0)
-#define WAKE_INTERVAL_MS 10000
 #define I2C_NODE DT_NODELABEL(bme680)
 #define I2C_PMSA003I_NODE DT_NODELABEL(pmsa003i)
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
@@ -74,18 +78,36 @@ int main(void)
         {
                 return -1;
         }
+        k_sleep(K_MSEC(WARM_UP_INTERVAL_MS));
 
         while (1)
         {
                 uint32_t uptime = k_uptime_get_32();
                 LOG_DBG("Wake up - uptime %u ms", uptime);
+
                 ret = sensor_sample_fetch(dev_i2c);
 
                 if (ret < 0)
                 {
                         LOG_ERR("Error fetching data");
+                        for (int i = 0; i < 5; i++)
+                        {
+                                ret = sensor_sample_fetch(dev_i2c);
+                                k_sleep(K_MSEC(RETRY_DELAY_MS));
+                                if (ret == 0)
+                                {
+                                        break;
+                                }
+                        }
+
+                        if (ret < 0)
+                        {
+                                LOG_ERR("Error Detecting sensor");
+                                continue;
+                        }
                 }
 
+                
                 ret = sensor_channel_get(dev_i2c, SENSOR_CHAN_AMBIENT_TEMP, &temp);
 
                 if (ret < 0)
@@ -121,11 +143,31 @@ int main(void)
 
                 temperature_send_sensor_notify(temp.val1);
 
-                pmsa003i_read(&pmsa003i_config, &pmsa003i_data_raw);
+                ret = pmsa003i_read(&pmsa003i_config, &pmsa003i_data_raw);
+
+                if (ret < 0)
+                {
+                        LOG_ERR("Error fetching pmsa003i data");
+                        for (int i = 0; i < 5; i++)
+                        {
+                                ret = pmsa003i_read(&pmsa003i_config, &pmsa003i_data_raw);
+                                k_sleep(K_MSEC(RETRY_DELAY_MS));
+                                if (ret == 0)
+                                {
+                                        break;
+                                }
+                        }
+
+                        if (ret < 0)
+                        {
+                                LOG_ERR("Error data");
+                                continue;
+                        }
+                }
 
                 LOG_INF("data raw %d, %d, %d", pmsa003i_data_raw.pm1_0, pmsa003i_data_raw.pm2_5, pmsa003i_data_raw.pm10_0);
 
                 gpio_pin_toggle_dt(&led);
-                k_sleep(K_MSEC(WAKE_INTERVAL_MS));
+                k_sleep(K_MSEC(WAKE_UP_INTERVAL));
         }
 }
