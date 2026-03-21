@@ -20,7 +20,7 @@ import { Reading } from './readings/entities/reading.entity';
         host: 'localhost',
         port: 5432,
         username: configService.get('DATABASE_USER'),
-        password: '',
+        password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
         entities: [Device, Reading],
         synchronize: true,
