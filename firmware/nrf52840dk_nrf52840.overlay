@@ -23,6 +23,14 @@
         status = "okay";
         reg = <0x76>;
     };
+
+    pmsa003i: pmsa003i@12 {
+        compatible = "plantower,pmsa003i";
+        status = "okay";
+        reg = <0x12>;
+    };
+    
+
 };
 
 &pinctrl {

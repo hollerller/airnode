@@ -86,8 +86,8 @@ This project is currently in active development. Follow the progress through com
 | ---------------- | -------------------------- | -------------- |
 | Firmware Phase 1 | MCU Low Power              | ✅ Complete    |
 | Firmware Phase 2 | BME680 sensor              | ✅ Complete    |
-| Firmware Phase 3 | BLE Minimal                | 🔄 In progress |
-| Firmware Phase 4 | PMSA003I sensor            | ⚪ Pending     |
+| Firmware Phase 3 | BLE Minimal                | ✅ Complete    |
+| Firmware Phase 4 | PMSA003I sensor            | 🔄 In progress |
 | Firmware Phase 5 | System Integration         | ⚪ Pending     |
 | Backend          | Auth + Device Registry     | ⚪ Pending     |
 | Mobile App       | Auth + BLE Provisioning    | ⚪ Pending     |
