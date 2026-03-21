@@ -31,19 +31,6 @@ static struct sensor_value hum;
 static struct sensor_value press;
 static pmsa003i_data_t pmsa003i_data_raw;
 
-#define MASK_INT 0x03
-#define MASK_FLOAT 0x03
-
-struct airnode_readings
-{
-        int32_t temperature_c;
-        int32_t humidity_pct;
-        int32_t pressure_hpa;
-        uint16_t pm1_0_ugm3;
-        uint16_t pm2_5_ugm3;
-        uint16_t pm10_ugm3;
-};
-
 static struct airnode_readings full_reading;
 
 static const struct bt_data ad[] = {
@@ -156,8 +143,6 @@ int main(void)
                         LOG_DBG("Pressure is %d,%d", press.val1, press.val2);
                 }
 
-                temperature_send_sensor_notify(temp.val1);
-
                 ret = pmsa003i_read(&pmsa003i_config, &pmsa003i_data_raw);
 
                 if (ret < 0)
@@ -188,6 +173,13 @@ int main(void)
                 full_reading.pm1_0_ugm3 = pmsa003i_data_raw.pm1_0;
                 full_reading.pm2_5_ugm3 = pmsa003i_data_raw.pm2_5;
                 full_reading.pm10_ugm3 = pmsa003i_data_raw.pm10_0;
+
+                send_sensor_notify(full_reading, TEMPERATURE);
+                send_sensor_notify(full_reading, HUMIDITY);
+                send_sensor_notify(full_reading, PRESSURE);
+                send_sensor_notify(full_reading, PM1_0);
+                send_sensor_notify(full_reading, PM2_5);
+                send_sensor_notify(full_reading, PM10);
 
                 LOG_DBG("Current reading:");
                 LOG_DBG("TEMP: %d.%d °C", (int32_t)full_reading.temperature_c / 100, (int32_t)full_reading.temperature_c % 100);
