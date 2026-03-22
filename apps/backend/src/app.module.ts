@@ -9,6 +9,8 @@ import { Device } from './devices/entities/device.entity';
 import { Reading } from './readings/entities/reading.entity';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtGuard } from './roles.guard';
 
 @Module({
   imports: [
@@ -32,6 +34,6 @@ import { UsersModule } from './users/users.module';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: JwtGuard }],
 })
 export class AppModule {}

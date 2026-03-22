@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { AuthTokenDto } from './dto/auth-token.dto';
+import { Public } from 'src/decorators/public';
 
 @Controller('users')
 export class UsersController {
@@ -42,6 +43,7 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
+  @Public()
   @Post('/auth/login')
   login(@Body() loginUserDto: LoginUserDto) {
     return this.usersService.login(loginUserDto);
