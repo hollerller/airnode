@@ -4,3 +4,8 @@ export interface UserCreated {
   lastName: string;
   email: string;
 }
+
+export interface TokenCreated {
+  accessToken: string;
+  refreshToken: string;
+}

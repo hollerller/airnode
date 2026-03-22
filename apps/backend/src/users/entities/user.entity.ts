@@ -21,4 +21,6 @@ export class User {
   registeredAt: Date;
   @Column()
   lastLogin: Date;
+  @Column()
+  refreshToken: string;
 }

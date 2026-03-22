@@ -5,9 +5,10 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { UserCreated } from './interfaces/user-interface';
+import { UserCreated, TokenCreated } from './interfaces/interfaces';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { AuthTokenDto } from './dto/auth-token.dto';
 
 @Injectable()
 export class UsersService {
@@ -38,6 +39,7 @@ export class UsersService {
       email: createUserDto.email,
       hash: pwHash,
       lastLogin: new Date(),
+      refreshToken: '',
     };
 
     const userCreated = await this.usersRepository.save(newUser);
@@ -66,7 +68,7 @@ export class UsersService {
     return `This action removes a #${id} user`;
   }
 
-  async login(loginUserDto: LoginUserDto) {
+  async login(loginUserDto: LoginUserDto): Promise<TokenCreated> {
     const userExists = await this.usersRepository.findOne({
       where: {
         email: loginUserDto.email,
@@ -86,6 +88,52 @@ export class UsersService {
       throw new HttpException('Wrong credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    return this.jwtService.sign({ id: userExists.id });
+    const accessToken = this.jwtService.sign({ id: userExists.id });
+    const refreshToken = this.jwtService.sign(
+      {
+        id: userExists.id,
+      },
+      { expiresIn: '7d' },
+    );
+
+    userExists.refreshToken = refreshToken;
+
+    await this.usersRepository.save(userExists);
+
+    return { accessToken: accessToken, refreshToken: refreshToken };
+  }
+
+  async refreshToken(authTokenDto: AuthTokenDto): Promise<TokenCreated> {
+    const userExists = await this.usersRepository.findOne({
+      where: {
+        refreshToken: authTokenDto.refreshToken,
+      },
+    });
+
+    if (!userExists) {
+      throw new HttpException('Wrong credentials', HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      const isTokenExpired = await this.jwtService.verify(
+        userExists.refreshToken,
+      );
+    } catch (err) {
+      throw new HttpException('Invalid refresh token', HttpStatus.UNAUTHORIZED);
+    }
+
+    const accessToken = this.jwtService.sign({ id: userExists.id });
+    const refreshToken = this.jwtService.sign(
+      {
+        id: userExists.id,
+      },
+      { expiresIn: '7d' },
+    );
+
+    userExists.refreshToken = refreshToken;
+
+    await this.usersRepository.save(userExists);
+
+    return { accessToken: accessToken, refreshToken: refreshToken };
   }
 }
