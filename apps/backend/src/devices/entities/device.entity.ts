@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity()
 export class Device {
@@ -12,7 +12,7 @@ export class Device {
   batteryMv: number;
   @Column()
   isOnline: boolean;
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
   @Column()
   lastSeen: Date;

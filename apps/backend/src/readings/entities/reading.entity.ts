@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Reading {
@@ -8,7 +13,7 @@ export class Reading {
   deviceId: string;
   @Column()
   timestamp: Date;
-  @Column()
+  @CreateDateColumn()
   createdAt: Date;
   @Column('float')
   temperature_c: number;

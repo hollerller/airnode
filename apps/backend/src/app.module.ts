@@ -7,11 +7,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Device } from './devices/entities/device.entity';
 import { Reading } from './readings/entities/reading.entity';
+import { User } from './users/entities/user.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     DevicesModule,
     ReadingsModule,
+    UsersModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -22,7 +25,7 @@ import { Reading } from './readings/entities/reading.entity';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [Device, Reading],
+        entities: [Device, Reading, User],
         synchronize: true,
       }),
       inject: [ConfigService],
