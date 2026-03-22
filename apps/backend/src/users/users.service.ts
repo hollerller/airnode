@@ -6,12 +6,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserCreated } from './interfaces/user-interface';
+import { LoginUserDto } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserCreated> {
@@ -61,5 +64,28 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const userExists = await this.usersRepository.findOne({
+      where: {
+        email: loginUserDto.email,
+      },
+    });
+
+    if (!userExists) {
+      throw new HttpException('Wrong credentials', HttpStatus.UNAUTHORIZED);
+    }
+
+    const checkPw = await bcrypt.compare(
+      loginUserDto.password,
+      userExists.hash,
+    );
+
+    if (!checkPw) {
+      throw new HttpException('Wrong credentials', HttpStatus.UNAUTHORIZED);
+    }
+
+    return this.jwtService.sign({ id: userExists.id });
   }
 }
