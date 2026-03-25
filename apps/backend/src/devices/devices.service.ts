@@ -4,6 +4,7 @@ import { UpdateDeviceDto } from './dto/update-device.dto';
 import { Device } from './entities/device.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class DevicesService {
@@ -12,24 +13,34 @@ export class DevicesService {
     private devicesRepository: Repository<Device>,
   ) {}
 
-  async create(createDeviceDto: CreateDeviceDto): Promise<Device> {
-    const newDevice: Device = {
+  async create(createDeviceDto: CreateDeviceDto, user: any): Promise<Device> {
+    const buf = crypto.randomBytes(16).toString('hex');
+
+    const newDevice = this.devicesRepository.create({
       deviceId: createDeviceDto.deviceId,
       deviceName: createDeviceDto.deviceName,
       firmwareVersion: createDeviceDto.firmwareVersion,
       batteryMv: 0,
       isOnline: false,
-      createdAt: new Date(),
-      lastSeen: new Date(),
-    };
+      user: { id: user.id },
+      deviceToken: buf,
+    });
 
     await this.devicesRepository.save(newDevice);
 
     return newDevice;
   }
 
-  findAll(): Promise<Device[]> {
-    return this.devicesRepository.find();
+  async findAll(user: any): Promise<UpdateDeviceDto[]> {
+    const devices = await this.devicesRepository.find({
+      where: {
+        user: { id: user.id },
+      },
+    });
+
+    const filteredDevices = devices.map(({ deviceToken, ...rest }) => rest);
+
+    return filteredDevices;
   }
 
   findOne(id: number) {

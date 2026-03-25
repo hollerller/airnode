@@ -1,4 +1,11 @@
-import { Entity, PrimaryColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+} from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 export class Device {
@@ -14,6 +21,10 @@ export class Device {
   isOnline: boolean;
   @CreateDateColumn()
   createdAt: Date;
-  @Column()
+  @Column({ nullable: true })
   lastSeen: Date;
+  @ManyToOne(() => User, (user) => user.devices)
+  user: User;
+  @Column({ unique: true })
+  deviceToken: string;
 }

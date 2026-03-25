@@ -23,9 +23,12 @@ export class JwtGuard implements CanActivate {
     if (!request.headers.authorization) return false;
 
     try {
-      const isValid = await this.jwtService.verify(
+      const payload = await this.jwtService.verify(
         request.headers.authorization.split(' ')[1],
       );
+
+      request['user'] = payload;
+
       return true;
     } catch (err) {
       return false;

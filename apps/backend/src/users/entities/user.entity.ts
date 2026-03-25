@@ -3,7 +3,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
+
+import { Device } from 'src/devices/entities/device.entity';
 
 @Entity()
 export class User {
@@ -23,4 +26,6 @@ export class User {
   lastLogin: Date;
   @Column()
   refreshToken: string;
+  @OneToMany(() => Device, (device) => device.user)
+  devices: Device[];
 }
