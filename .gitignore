@@ -138,13 +138,5 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Private notes
-AIRNODE_MASTER_ROADMAP.md
-modulo-0/docs/**/*.md
-firmware/docs/**/*.md
-!firmware/docs/fsm_airnode.md
-
 .DS_Store
-
-modulo-0/ts/*.js
 .vscode
