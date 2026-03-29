@@ -26,17 +26,21 @@ export class DevicesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string, @Body() updateDeviceDto: UpdateDeviceDto) {
     return this.devicesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDeviceDto: UpdateDeviceDto) {
-    return this.devicesService.update(+id, updateDeviceDto);
+  update(
+    @Param('id') id: string,
+    @User() user: any,
+    @Body() updateDeviceDto: UpdateDeviceDto,
+  ) {
+    return this.devicesService.update(id, user, updateDeviceDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.devicesService.remove(+id);
+  remove(@Param('id') id: string, @User() user: any) {
+    return this.devicesService.remove(id, user);
   }
 }

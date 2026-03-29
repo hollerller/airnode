@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { Device } from './entities/device.entity';
@@ -47,11 +47,44 @@ export class DevicesService {
     return `This action returns a #${id} device`;
   }
 
-  update(id: number, updateDeviceDto: UpdateDeviceDto) {
-    return `This action updates a #${id} device`;
+  async update(
+    id: string,
+    user: any,
+    updateDeviceDto: UpdateDeviceDto,
+  ): Promise<UpdateDeviceDto> {
+    const device = await this.devicesRepository.findOneBy({
+      user: { id: user.id },
+      deviceId: id,
+    });
+
+    if (!device) {
+      throw new HttpException('Device does not exist', HttpStatus.NOT_FOUND);
+    }
+
+    const updatedDevice = {
+      ...device,
+      deviceName: updateDeviceDto.deviceName,
+    };
+
+    await this.devicesRepository.save(updatedDevice);
+
+    return updatedDevice;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} device`;
+  async remove(id: string, user: any): Promise<string> {
+    const device = await this.devicesRepository.findOneBy({
+      user: { id: user.id },
+      deviceId: id,
+    });
+
+    if (!device) {
+      throw new HttpException('Device does not exist', HttpStatus.NOT_FOUND);
+    }
+
+    const name = device.deviceName;
+
+    await this.devicesRepository.remove(device);
+
+    return `This action removes a #${name} device`;
   }
 }
