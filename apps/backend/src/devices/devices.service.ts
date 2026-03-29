@@ -1,6 +1,9 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateDeviceDto } from './dto/create-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
+import {
+  UpdateDeviceDto,
+  UpdateDeviceStatusDto,
+} from './dto/update-device.dto';
 import { Device } from './entities/device.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -69,6 +72,32 @@ export class DevicesService {
     await this.devicesRepository.save(updatedDevice);
 
     return updatedDevice;
+  }
+
+  async updateStatus(
+    deviceToken: string,
+    updateDeviceStatusDto: UpdateDeviceStatusDto,
+  ) {
+    const device = await this.devicesRepository.findOneBy({
+      deviceToken: deviceToken,
+    });
+
+    if (!device) {
+      throw new HttpException('Device does not exist', HttpStatus.NOT_FOUND);
+    }
+
+    const updatedDevice = {
+      ...device,
+      batteryMv: updateDeviceStatusDto.batteryMv,
+      isOnline: updateDeviceStatusDto.isOnline,
+      lastSeen: new Date(),
+    };
+
+    await this.devicesRepository.save(updatedDevice);
+
+    return {
+      success: true,
+    };
   }
 
   async remove(id: string, user: any): Promise<string> {

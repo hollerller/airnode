@@ -6,11 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  Headers,
 } from '@nestjs/common';
 import { DevicesService } from './devices.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
+import {
+  UpdateDeviceDto,
+  UpdateDeviceStatusDto,
+} from './dto/update-device.dto';
 import { User } from 'src/decorators/user.decorator';
+import { Public } from 'src/decorators/public';
 @Controller('devices')
 export class DevicesController {
   constructor(private readonly devicesService: DevicesService) {}
@@ -28,6 +33,15 @@ export class DevicesController {
   @Get(':id')
   findOne(@Param('id') id: string, @Body() updateDeviceDto: UpdateDeviceDto) {
     return this.devicesService.findOne(+id);
+  }
+
+  @Public()
+  @Patch('/status')
+  updateStatus(
+    @Headers('X-Device-Token') deviceToken: string,
+    @Body() updateDeviceStatusDto: UpdateDeviceStatusDto,
+  ) {
+    return this.devicesService.updateStatus(deviceToken, updateDeviceStatusDto);
   }
 
   @Patch(':id')
