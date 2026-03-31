@@ -1,4 +1,6 @@
 import { View, Text } from "react-native";
+import { authStore } from "../stores/authStore";
+import { useStore } from "zustand";
 
 export function LoginScreen() {
   return (

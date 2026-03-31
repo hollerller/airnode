@@ -1,19 +1,20 @@
 import * as React from "react";
-import { View, Text } from "react-native";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { LoginScreen } from "./src/screens/login";
 import { RegisterScreen } from "./src/screens/register";
-import { Button } from "react-native";
 import { DashboardScreen } from "./src/screens/dashboard";
 import { DevicesScreen } from "./src/screens/devices";
 import { SettingsScren } from "./src/screens/settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { authStore } from "./src/stores/authStore";
 
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
-  const isLoggedIn = true;
+  //const isLoggedIn = false;
+
+  const isLoggedIn = authStore((state) => state.isLoggedIn);
 
   return (
     <Stack.Navigator>
