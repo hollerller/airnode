@@ -5,15 +5,21 @@ import { LoginScreen } from "./src/screens/login";
 import { RegisterScreen } from "./src/screens/register";
 import { DashboardScreen } from "./src/screens/dashboard";
 import { DevicesScreen } from "./src/screens/devices";
-import { SettingsScren } from "./src/screens/settings";
+import { SettingsScreen } from "./src/screens/settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { authStore } from "./src/stores/authStore";
+
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
-  //const isLoggedIn = false;
-
   const isLoggedIn = authStore((state) => state.isLoggedIn);
 
   return (
@@ -43,15 +49,17 @@ function MainTabs() {
     <Tab.Navigator>
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Devices" component={DevicesScreen} />
-      <Tab.Screen name="Settings" component={SettingsScren} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
 }
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <RootStack />
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
