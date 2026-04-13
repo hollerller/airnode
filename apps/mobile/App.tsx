@@ -20,7 +20,7 @@ const queryClient = new QueryClient();
 const Stack = createNativeStackNavigator();
 
 function RootStack() {
-  const isLoggedIn = authStore((state) => state.isLoggedIn);
+  const isLoggedIn = authStore();
 
   return (
     <Stack.Navigator>

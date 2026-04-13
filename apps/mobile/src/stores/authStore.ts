@@ -14,11 +14,11 @@ export const authStore = create<authStoreTypes>((set) => ({
   refreshToken: "",
 
   login: (accessToken: string, refreshToken: string) =>
-    set((state) => ({
+    set({
       isLoggedIn: true,
       accessToken: accessToken,
       refreshToken: refreshToken,
-    })),
+    }),
   logout: () =>
     set((state) => ({
       isLoggedIn: false,
