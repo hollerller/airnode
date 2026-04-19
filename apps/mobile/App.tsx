@@ -9,36 +9,31 @@ import { SettingsScreen } from "./src/screens/settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { authStore } from "./src/stores/authStore";
 
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
-const Stack = createNativeStackNavigator();
+const RootStackNav = createNativeStackNavigator();
+const AuthStackNav = createNativeStackNavigator();
 
 function RootStack() {
-  const isLoggedIn = authStore();
+  const isLoggedIn = authStore((state) => state.isLoggedIn);
 
-  return (
-    <Stack.Navigator>
-      {!isLoggedIn ? (
-        <Stack.Screen name="Home" component={AuthStack} />
-      ) : (
-        <Stack.Screen name="Tabs" component={MainTabs} />
-      )}
-    </Stack.Navigator>
-  );
+  console.log(isLoggedIn);
+
+  if (!isLoggedIn) {
+    return <AuthStack />;
+  }
+
+  return <MainTabs />;
 }
 
 function AuthStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-    </Stack.Navigator>
+    <AuthStackNav.Navigator>
+      <AuthStackNav.Screen name="Login" component={LoginScreen} />
+      <AuthStackNav.Screen name="Register" component={RegisterScreen} />
+    </AuthStackNav.Navigator>
   );
 }
 

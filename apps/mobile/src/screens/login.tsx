@@ -2,10 +2,12 @@ import { View, Text, TextInput, StyleSheet, Button } from "react-native";
 import React from "react";
 import { login } from "../api/authService";
 import { authStore } from "../stores/authStore";
+import { useNavigation } from "@react-navigation/native";
 
 export function LoginScreen() {
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
+  const navigation = useNavigation();
 
   const onClick = async () => {
     const response = await login(email, password);
@@ -35,6 +37,12 @@ export function LoginScreen() {
       ></TextInput>
 
       <Button onPress={onClick} title="Login" color="#841584"></Button>
+
+      <Button
+        onPress={() => navigation.navigate("Register")}
+        title="No tienes cuenta? registrate!"
+        color="#841584"
+      ></Button>
     </View>
   );
 }
