@@ -4,6 +4,12 @@ import { login } from "../api/authService";
 import { authStore } from "../stores/authStore";
 import { useNavigation } from "@react-navigation/native";
 
+import * as SecureStore from "expo-secure-store";
+
+async function save(key: string, value: string) {
+  await SecureStore.setItemAsync(key, value);
+}
+
 export function LoginScreen() {
   const [email, onChangeEmail] = React.useState("");
   const [password, onChangePassword] = React.useState("");
@@ -16,6 +22,8 @@ export function LoginScreen() {
       const { accessToken, refreshToken } = response;
 
       authStore.getState().login(accessToken, refreshToken);
+      save("accessToken", accessToken);
+      save("refreshToken", refreshToken);
     } else;
   };
 

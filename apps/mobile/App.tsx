@@ -9,17 +9,16 @@ import { SettingsScreen } from "./src/screens/settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { authStore } from "./src/stores/authStore";
 
+import * as SecureStore from "expo-secure-store";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
-const RootStackNav = createNativeStackNavigator();
 const AuthStackNav = createNativeStackNavigator();
 
 function RootStack() {
   const isLoggedIn = authStore((state) => state.isLoggedIn);
-
-  console.log(isLoggedIn);
 
   if (!isLoggedIn) {
     return <AuthStack />;
@@ -50,6 +49,18 @@ function MainTabs() {
 }
 
 export default function App() {
+  React.useEffect(() => {
+    const loadTokens = async () => {
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      const refreshToken = await SecureStore.getItemAsync("refreshToken");
+
+      if (accessToken && refreshToken !== null) {
+        authStore.getState().login(accessToken, refreshToken);
+      }
+    };
+    loadTokens();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
