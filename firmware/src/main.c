@@ -11,7 +11,7 @@
 
 #define RETRY_DELAY_MS 10000
 #define WARM_UP_INTERVAL_MS 10000
-#define WAKE_UP_INTERVAL 300000
+#define WAKE_UP_INTERVAL 10000
 
 #define LED0_NODE DT_ALIAS(led0)
 #define I2C_NODE DT_NODELABEL(bme680)
@@ -43,6 +43,24 @@ int main(void)
 {
         int ret;
 
+        ret = bt_enable(NULL);
+        if (ret)
+        {
+                LOG_ERR("Bluetooth init failed (err %d)\n", ret);
+                return -1;
+        }
+
+        LOG_INF("Bluetooth initialized\n");
+
+        ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ad, ARRAY_SIZE(ad), 0, 0);
+        if (ret)
+        {
+                LOG_ERR("Advertising failed to start (err %d)\n", ret);
+                return -1;
+        }
+
+        LOG_INF("Advertising started %d\n", ret);
+
         if (!device_is_ready(dev_i2c))
         {
                 LOG_ERR("I2C bus for BME680 %s is not ready!", dev_i2c->name);
@@ -71,22 +89,6 @@ int main(void)
         {
                 uint32_t uptime = k_uptime_get_32();
                 LOG_DBG("Wake up - uptime %u ms", uptime);
-
-                ret = bt_enable(NULL);
-                if (ret)
-                {
-                        LOG_ERR("Bluetooth init failed (err %d)\n", ret);
-                        return -1;
-                }
-
-                LOG_INF("Bluetooth initialized\n");
-
-                ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ad, ARRAY_SIZE(ad), 0, 0);
-                if (ret)
-                {
-                        LOG_ERR("Advertising failed to start (err %d)\n", ret);
-                        return -1;
-                }
 
                 ret = sensor_sample_fetch(dev_i2c);
 
@@ -190,7 +192,7 @@ int main(void)
                 LOG_DBG("PM10: %d μg/m³", full_reading.pm10_ugm3);
 
                 gpio_pin_toggle_dt(&led);
-                bt_disable();
+                // bt_le_adv_stop();
                 k_sleep(K_MSEC(WAKE_UP_INTERVAL));
         }
 }
