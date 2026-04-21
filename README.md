@@ -11,9 +11,9 @@
 
 ## What is AirNode?
 
-AirNode is a low-power environmental sensor that measures air quality in real time and streams data to a mobile app via BLE and MQTT over WiFi.
+AirNode is a low-power environmental sensor that measures air quality in real time and streams data to a mobile app via BLE. The app acts as a gateway, forwarding sensor data to a cloud backend over HTTP.
 
-It is designed as a complete end-to-end IoT product — from embedded firmware to cloud backend to cross-platform mobile app.
+It is designed as a complete end to end IoT product, from embedded firmware to cloud backend to cross-platform mobile app.
 
 ---
 
@@ -22,9 +22,9 @@ It is designed as a complete end-to-end IoT product — from embedded firmware t
 - 🌡️ Temperature, humidity and pressure (BME680)
 - 💨 PM1.0, PM2.5 and PM10 particulate matter (PMSA003I)
 - 📱 iOS and Android app — real-time dashboard, historical charts, device config
-- 🔵 BLE provisioning — connect and configure the device from the app
-- ☁️ MQTT data pipeline with cloud backend
-- 🔋 Ultra low-power design — target <50 µA average current
+- 🔵 BLE connection — scan, connect, and read sensor data in real time
+- ☁️ Cloud backend with auth, device registry, and data storage
+- 🔋 Ultra low-power design — ~15 µA average current at 5-min intervals
 - 🔧 Custom PCB hardware design (KiCad)
 - 🔄 OTA firmware updates
 
@@ -37,15 +37,22 @@ It is designed as a complete end-to-end IoT product — from embedded firmware t
 │              AIRNODE DEVICE             │
 │         nRF52840 + Zephyr RTOS          │
 │      BME680 (I2C) · PMSA003I (I2C)      │
-└──────────┬──────────────┬───────────────┘
-           │ BLE          │ MQTT over WiFi
-           ▼              ▼
-┌──────────────┐   ┌─────────────────────┐
-│  Mobile App  │   │       Backend       │
-│ React Native │◄──│ NestJS · PostgreSQL │
-│  TypeScript  │   │ InfluxDB · Redis    │
-│  iOS/Android │   │ EMQX MQTT Broker    │
-└──────────────┘   └─────────────────────┘
+└──────────────────┬──────────────────────┘
+                   │ BLE (notify)
+                   ▼
+┌─────────────────────────────────────────┐
+│           MOBILE APP (Gateway)          │
+│        React Native · TypeScript        │
+│   BLE scan → connect → read → display  │
+│          HTTP POST → Backend            │
+└──────────────────┬──────────────────────┘
+                   │ HTTPS
+                   ▼
+┌─────────────────────────────────────────┐
+│              BACKEND                    │
+│         NestJS · PostgreSQL             │
+│    Auth · Device Registry · Readings    │
+└─────────────────────────────────────────┘
 ```
 
 ---
@@ -54,11 +61,10 @@ It is designed as a complete end-to-end IoT product — from embedded firmware t
 
 | Layer          | Technology                                          |
 | -------------- | --------------------------------------------------- |
-| Firmware       | C/C++ · Zephyr RTOS · nRF Connect SDK               |
-| Protocols      | BLE 5.0 · MQTT · I2C                                |
+| Firmware       | C · Zephyr RTOS · nRF Connect SDK                   |
+| Protocols      | BLE 5.0 · I2C                                       |
 | Mobile         | React Native · TypeScript · Kotlin (native modules) |
 | Backend        | NestJS · PostgreSQL · InfluxDB · Redis              |
-| Broker         | EMQX Cloud                                          |
 | Infrastructure | Fly.io · GitHub Actions · Cloudflare                |
 
 ---
@@ -72,8 +78,7 @@ airnode/
 │   ├── mobile/        # React Native app (iOS + Android)
 │   └── backend/       # NestJS REST API + MQTT
 ├── docs/              # Architecture, BLE profile, API reference
-├── hardware/          # Schematics and BOM
-└── modulo-0/          # Learning exercises (JS · TS · React)
+└── hardware/          # Schematics and BOM
 ```
 
 ---
@@ -91,7 +96,7 @@ This project is currently in active development. Follow the progress through com
 | Firmware Phase 5 | System Integration         | ✅ Complete    |
 | Backend          | Auth + Device Registry     | ✅ Complete    |
 | Mobile App       | Auth + BLE Provisioning    | 🔄 In progress |
-| Data Pipeline    | MQTT + Real-time           | ⚪ Pending     |
+| Data Pipeline    | App → HTTP → Backend → DB  | ⚪ Pending     |
 | MVP Demo         | End-to-end working product | ⚪ Pending     |
 | Hardware         | Custom PCB (KiCad)         | ⚪ Pending     |
 

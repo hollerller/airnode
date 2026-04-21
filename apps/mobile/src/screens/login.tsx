@@ -42,6 +42,7 @@ export function LoginScreen() {
         onChangeText={onChangePassword}
         value={password}
         placeholder="Password"
+        secureTextEntry={true}
       ></TextInput>
 
       <Button onPress={onClick} title="Login" color="#841584"></Button>
