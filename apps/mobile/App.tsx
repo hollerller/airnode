@@ -8,8 +8,10 @@ import { DevicesScreen } from "./src/screens/devices";
 import { SettingsScreen } from "./src/screens/settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { authStore } from "./src/stores/authStore";
+import { View, StatusBar, Text } from "react-native";
 
 import * as SecureStore from "expo-secure-store";
+import Ionicons from "@expo/vector-icons/MaterialIcons";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -42,7 +44,30 @@ function MainTabs() {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
-      <Tab.Screen name="Devices" component={DevicesScreen} />
+      <Tab.Screen
+        name="Devices"
+        component={DevicesScreen}
+        options={{
+          headerTitle: () => {
+            return (
+              <View
+                style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
+              >
+                <Text
+                  style={{ fontSize: 36, fontWeight: "bold", color: "#171823" }}
+                >
+                  Devices
+                </Text>
+                <Ionicons
+                  name="bluetooth-connected"
+                  size={46}
+                  color="#3ED975"
+                />
+              </View>
+            );
+          },
+        }}
+      />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
@@ -63,6 +88,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <StatusBar barStyle="dark-content" />
       <NavigationContainer>
         <RootStack />
       </NavigationContainer>

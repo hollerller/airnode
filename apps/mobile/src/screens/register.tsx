@@ -19,14 +19,22 @@ export function RegisterScreen() {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Register Screen</Text>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 20,
+      }}
+    >
+      <Text style={{ fontSize: 30, fontWeight: "bold" }}>Register Screen</Text>
 
       <TextInput
         style={styles.input}
         onChangeText={onChangeName}
         value={name}
         placeholder="Name"
+        placeholderTextColor="#100202"
       ></TextInput>
 
       <TextInput
@@ -34,6 +42,7 @@ export function RegisterScreen() {
         onChangeText={onChangeLastName}
         value={lastName}
         placeholder="Last Name"
+        placeholderTextColor="#100202"
       ></TextInput>
 
       <TextInput
@@ -41,6 +50,7 @@ export function RegisterScreen() {
         onChangeText={onChangeEmail}
         value={email}
         placeholder="Email"
+        placeholderTextColor="#100202"
       ></TextInput>
 
       <TextInput
@@ -48,6 +58,7 @@ export function RegisterScreen() {
         onChangeText={onChangePassword}
         value={password}
         placeholder="Password"
+        placeholderTextColor="#100202"
       ></TextInput>
 
       <Button onPress={onClick} title="Register" color="#841584"></Button>

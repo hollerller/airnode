@@ -11,8 +11,15 @@ export function SettingsScreen() {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Settings Screen</Text>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 30,
+      }}
+    >
+      <Text style={{ fontSize: 30, fontWeight: "bold" }}>Settings Screen</Text>
       <Button onPress={onClick} title="Logout" color="#841584"></Button>
     </View>
   );

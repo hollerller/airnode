@@ -24,6 +24,8 @@ export function DevicesScreen() {
     pm10_ugm3: 0,
   });
 
+  const [connectedDeviceId, setConnectedDeviceId] = useState<string>("");
+
   type DeviceProps = { name: string; onPress: () => void };
 
   const DeviceItem = ({ name, onPress }: DeviceProps) => (
@@ -66,6 +68,14 @@ export function DevicesScreen() {
     });
 
     setTimeout(() => manager.stopDeviceScan(), 10000);
+  };
+
+  const onClickDisconnectBle = async (deviceId: string) => {
+    await manager.cancelDeviceConnection(deviceId);
+
+    setConnectedDeviceId(null);
+
+    console.log("Device disconnected");
   };
 
   const onPress = async (itemId: string) => {
@@ -190,37 +200,58 @@ export function DevicesScreen() {
         }));
       },
     );
+
+    setConnectedDeviceId(itemId);
   };
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Devices Screen</Text>
+      <Text style={{ fontSize: 30, marginTop: 20, fontWeight: "bold" }}>
+        Available devices
+      </Text>
 
       <FlatList
         data={devices}
         renderItem={({ item }) => (
-          <DeviceItem name={item.name} onPress={() => onPress(item.id)} />
+          <DeviceItem
+            name={item.name}
+            onPress={() => {
+              onPress(item.id);
+            }}
+          />
         )}
         keyExtractor={(device) => device.id}
       />
 
+      {connectedDeviceId && (
+        <Text style={styles.titleConnected}>Connected to AirNode</Text>
+      )}
+
       <View style={styles.sensorContainer}>
         <Text style={styles.value}>
-          Temperature: {sensorData.temperature_c}{" "}
+          Temperature: {sensorData.temperature_c} °C
         </Text>
 
-        <Text style={styles.value}>Humidity: {sensorData.humidity_pct} </Text>
+        <Text style={styles.value}>Humidity: {sensorData.humidity_pct} % </Text>
 
-        <Text style={styles.value}>Pressure: {sensorData.pressure_hpa} </Text>
+        <Text style={styles.value}>
+          Pressure: {sensorData.pressure_hpa} hPa
+        </Text>
 
-        <Text style={styles.value}>PM 1.0: {sensorData.pm1_0_ugm3} </Text>
+        <Text style={styles.value}>PM 1.0: {sensorData.pm1_0_ugm3} µg/m³ </Text>
 
-        <Text style={styles.value}>PM 2.5: {sensorData.pm2_5_ugm3} </Text>
+        <Text style={styles.value}>PM 2.5: {sensorData.pm2_5_ugm3} µg/m³ </Text>
 
-        <Text style={styles.value}>PM 10: {sensorData.pm10_ugm3} </Text>
+        <Text style={styles.value}>PM 10: {sensorData.pm10_ugm3} µg/m³ </Text>
       </View>
-
-      <Button onPress={onClick} title="Scan" color="#841584"></Button>
+      <View style={styles.buttons}>
+        <Button onPress={onClick} title="Scan" color="#841584"></Button>
+        <Button
+          onPress={() => onClickDisconnectBle(connectedDeviceId)}
+          title="Disconnect"
+          color="#841584"
+        ></Button>
+      </View>
     </View>
   );
 }
@@ -231,18 +262,38 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0,
   },
   item: {
-    backgroundColor: "#f9c2ff",
-    padding: 20,
-    marginVertical: 8,
+    backgroundColor: "#00ffc8fd",
+    padding: 12,
     marginHorizontal: 16,
+    borderRadius: 20,
+    alignSelf: "center",
+    paddingHorizontal: 30,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
+    textAlign: "center",
   },
 
   value: {
     fontSize: 24,
     fontWeight: "bold",
     color: "blue",
+  },
+  sensorContainer: {
+    marginVertical: 50,
+  },
+  buttons: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 30,
+    borderRadius: 10,
+  },
+  titleConnected: {
+    fontSize: 26,
+    backgroundColor: "#51e26e",
+    padding: 10,
+    paddingHorizontal: 30,
+    borderRadius: 20,
+    fontWeight: "bold",
   },
 });

@@ -28,13 +28,21 @@ export function LoginScreen() {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Login Screen</Text>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 20,
+      }}
+    >
+      <Text style={{ fontSize: 30, fontWeight: "bold" }}>Login Screen</Text>
       <TextInput
         style={styles.input}
         onChangeText={onChangeEmail}
         value={email}
         placeholder="Email"
+        placeholderTextColor="#100202"
       ></TextInput>
 
       <TextInput
@@ -43,6 +51,7 @@ export function LoginScreen() {
         value={password}
         placeholder="Password"
         secureTextEntry={true}
+        placeholderTextColor="#100202"
       ></TextInput>
 
       <Button onPress={onClick} title="Login" color="#841584"></Button>
