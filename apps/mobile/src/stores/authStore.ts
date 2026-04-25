@@ -20,9 +20,9 @@ export const authStore = create<authStoreTypes>((set) => ({
       refreshToken: refreshToken,
     }),
   logout: () =>
-    set((state) => ({
+    set({
       isLoggedIn: false,
       accessToken: "",
       refreshToken: "",
-    })),
+    }),
 }));

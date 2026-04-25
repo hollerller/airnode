@@ -14,7 +14,7 @@ export function RegisterScreen() {
     const response = await register(name, lastName, email, password);
 
     if (response) {
-      const { name, lastName, email, password } = response;
+      navigation.navigate("Login");
     } else;
   };
 

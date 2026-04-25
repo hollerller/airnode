@@ -24,7 +24,7 @@ export function LoginScreen() {
       authStore.getState().login(accessToken, refreshToken);
       save("accessToken", accessToken);
       save("refreshToken", refreshToken);
-    } else;
+    }
   };
 
   return (

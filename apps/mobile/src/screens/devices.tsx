@@ -24,7 +24,9 @@ export function DevicesScreen() {
     pm10_ugm3: 0,
   });
 
-  const [connectedDeviceId, setConnectedDeviceId] = useState<string>("");
+  const [connectedDeviceId, setConnectedDeviceId] = useState<string | null>(
+    null,
+  );
 
   type DeviceProps = { name: string; onPress: () => void };
 
@@ -86,28 +88,24 @@ export function DevicesScreen() {
         itemId,
         "connect",
       );
-    console.log("Device Data", JSON.stringify(deviceData));
-
     const services = await manager.servicesForDevice(itemId);
 
-    console.log("Services", JSON.stringify(services));
+    const essService = services.find((s) => s.uuid.includes("181a"));
+    if (!essService) return;
 
     const characteristics = await manager.characteristicsForDevice(
       itemId,
-      services[2].uuid,
+      essService.uuid,
     );
 
-    console.log("characteristics", JSON.stringify(characteristics));
-
-    const tempValue = await manager.monitorCharacteristicForDevice(
+    manager.monitorCharacteristicForDevice(
       itemId,
-      services[2].uuid,
+      essService.uuid,
       characteristics[0].uuid,
       (error, characteristic) => {
         const temp = characteristic?.value;
         const raw = Buffer.from(temp, "base64");
         const tempValue = raw.readInt32LE(0);
-        console.log("Temp value", tempValue);
 
         setSensorData((prev) => ({
           ...prev,
@@ -116,15 +114,14 @@ export function DevicesScreen() {
       },
     );
 
-    const humValue = await manager.monitorCharacteristicForDevice(
+    manager.monitorCharacteristicForDevice(
       itemId,
-      services[2].uuid,
+      essService.uuid,
       characteristics[1].uuid,
       (error, characteristic) => {
         const hum = characteristic?.value;
         const raw = Buffer.from(hum, "base64");
         const humValue = raw.readInt32LE(0);
-        console.log("Hum value", humValue);
 
         setSensorData((prev) => ({
           ...prev,
@@ -133,15 +130,14 @@ export function DevicesScreen() {
       },
     );
 
-    const pressValue = await manager.monitorCharacteristicForDevice(
+    manager.monitorCharacteristicForDevice(
       itemId,
-      services[2].uuid,
+      essService.uuid,
       characteristics[2].uuid,
       (error, characteristic) => {
         const press = characteristic?.value;
         const raw = Buffer.from(press, "base64");
         const pressValue = raw.readInt32LE(0);
-        console.log("Press value", pressValue);
 
         setSensorData((prev) => ({
           ...prev,
@@ -150,15 +146,14 @@ export function DevicesScreen() {
       },
     );
 
-    const pm1Value = await manager.monitorCharacteristicForDevice(
+    manager.monitorCharacteristicForDevice(
       itemId,
-      services[2].uuid,
+      essService.uuid,
       characteristics[3].uuid,
       (error, characteristic) => {
         const pm1 = characteristic?.value;
         const raw = Buffer.from(pm1, "base64");
         const pm1Value = raw.readInt16LE(0);
-        console.log("PM 1 value", pm1Value);
 
         setSensorData((prev) => ({
           ...prev,
@@ -169,13 +164,12 @@ export function DevicesScreen() {
 
     const pm25Value = await manager.monitorCharacteristicForDevice(
       itemId,
-      services[2].uuid,
+      essService.uuid,
       characteristics[4].uuid,
       (error, characteristic) => {
         const pm25 = characteristic?.value;
         const raw = Buffer.from(pm25, "base64");
         const pm25Value = raw.readInt16LE(0);
-        console.log("PM 2.5 value", pm25Value);
 
         setSensorData((prev) => ({
           ...prev,
@@ -184,15 +178,14 @@ export function DevicesScreen() {
       },
     );
 
-    const pm10Value = await manager.monitorCharacteristicForDevice(
+    manager.monitorCharacteristicForDevice(
       itemId,
-      services[2].uuid,
+      essService.uuid,
       characteristics[5].uuid,
       (error, characteristic) => {
         const pm10 = characteristic?.value;
         const raw = Buffer.from(pm10, "base64");
         const pm10Value = raw.readInt16LE(0);
-        console.log("PM 10 value", pm10Value);
 
         setSensorData((prev) => ({
           ...prev,

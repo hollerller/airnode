@@ -79,7 +79,7 @@ export default function App() {
       const accessToken = await SecureStore.getItemAsync("accessToken");
       const refreshToken = await SecureStore.getItemAsync("refreshToken");
 
-      if (accessToken && refreshToken !== null) {
+      if (accessToken && refreshToken) {
         authStore.getState().login(accessToken, refreshToken);
       }
     };
