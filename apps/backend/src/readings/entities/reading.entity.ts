@@ -11,8 +11,6 @@ export class Reading {
   id?: number;
   @Column()
   deviceId: string;
-  @Column()
-  timestamp: Date;
   @CreateDateColumn()
   createdAt: Date;
   @Column('float')
