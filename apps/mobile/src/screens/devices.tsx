@@ -37,13 +37,16 @@ export function DevicesScreen() {
   const [connectedDeviceId, setConnectedDeviceId] = useState<string | null>(
     null,
   );
+  const hasSentReading = useRef<boolean>(false);
 
   useEffect(() => {
     if (!sensorData) return;
 
     const dataReady = Object.values(sensorData).every((v) => v !== null);
 
-    if (dataReady) {
+    if (dataReady && !hasSentReading.current) {
+      hasSentReading.current = true;
+
       postReading(
         connectedDeviceId!,
         sensorData.temperature_c!,
@@ -53,15 +56,9 @@ export function DevicesScreen() {
         sensorData.pm2_5_ugm3!,
         sensorData.pm10_ugm3!,
       );
-
-      setSensorData({
-        temperature_c: null,
-        humidity_pct: null,
-        pressure_hpa: null,
-        pm1_0_ugm3: null,
-        pm2_5_ugm3: null,
-        pm10_ugm3: null,
-      });
+      setTimeout(() => {
+        hasSentReading.current = false;
+      }, 9000);
     }
   }, [sensorData]);
 
