@@ -9,24 +9,58 @@ import {
 } from "react-native";
 import { requestBluetoothPermission } from "../ble/bleManager";
 import { manager } from "../ble/bleManager";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Device } from "react-native-ble-plx";
 import { Buffer } from "buffer";
+import { postReading } from "../api/readingsService";
+
+type senseorReading = {
+  temperature_c: number | null;
+  humidity_pct: number | null;
+  pressure_hpa: number | null;
+  pm1_0_ugm3: number | null;
+  pm2_5_ugm3: number | null;
+  pm10_ugm3: number | null;
+};
 
 export function DevicesScreen() {
   const [devices, setDevices] = useState<Device[]>([]);
-  const [sensorData, setSensorData] = useState({
-    temperature_c: 0,
-    humidity_pct: 0,
-    pressure_hpa: 0,
-    pm1_0_ugm3: 0,
-    pm2_5_ugm3: 0,
-    pm10_ugm3: 0,
+  const [sensorData, setSensorData] = useState<senseorReading>({
+    temperature_c: null,
+    humidity_pct: null,
+    pressure_hpa: null,
+    pm1_0_ugm3: null,
+    pm2_5_ugm3: null,
+    pm10_ugm3: null,
   });
 
   const [connectedDeviceId, setConnectedDeviceId] = useState<string | null>(
     null,
   );
+  const hasSentReading = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (!sensorData) return;
+
+    const dataReady = Object.values(sensorData).every((v) => v !== null);
+
+    if (dataReady && !hasSentReading.current) {
+      hasSentReading.current = true;
+
+      postReading(
+        connectedDeviceId!,
+        sensorData.temperature_c!,
+        sensorData.humidity_pct!,
+        sensorData.pressure_hpa!,
+        sensorData.pm1_0_ugm3!,
+        sensorData.pm2_5_ugm3!,
+        sensorData.pm10_ugm3!,
+      );
+      setTimeout(() => {
+        hasSentReading.current = false;
+      }, 9000);
+    }
+  }, [sensorData]);
 
   type DeviceProps = { name: string; onPress: () => void };
 

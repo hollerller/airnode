@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ReadingsService } from './readings.service';
 import { CreateReadingDto } from './dto/create-reading.dto';
 import { UpdateReadingDto } from './dto/update-reading.dto';
@@ -10,6 +19,21 @@ export class ReadingsController {
   @Post()
   create(@Body() createReadingDto: CreateReadingDto) {
     return this.readingsService.create(createReadingDto);
+  }
+
+  @Get()
+  findDeviceReadings(
+    @Query('deviceId') deviceId: string,
+    @Query('from') from: string,
+    @Query('to') to: string,
+    @Query('limit') limit: string,
+  ) {
+    return this.readingsService.findDeviceReadings(
+      deviceId,
+      from,
+      to,
+      Number(limit),
+    );
   }
 
   @Get()

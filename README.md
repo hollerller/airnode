@@ -95,8 +95,9 @@ This project is currently in active development. Follow the progress through com
 | Firmware Phase 4 | PMSA003I sensor            | ✅ Complete    |
 | Firmware Phase 5 | System Integration         | ✅ Complete    |
 | Backend          | Auth + Device Registry     | ✅ Complete    |
-| Mobile App       | Auth + BLE Provisioning    | 🔄 In progress |
-| Data Pipeline    | App → HTTP → Backend → DB  | ⚪ Pending     |
+| Mobile App       | Auth + BLE Provisioning    | ✅ Complete    |
+| Data Pipeline    | App → HTTP → Backend → DB  | ✅ Complete    |
+| Dashboard        | Historical data + Charts   | 🔄 In progress |
 | MVP Demo         | End-to-end working product | ⚪ Pending     |
 | Hardware         | Custom PCB (KiCad)         | ⚪ Pending     |
 

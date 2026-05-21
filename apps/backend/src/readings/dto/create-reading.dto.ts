@@ -1,6 +1,5 @@
 export class CreateReadingDto {
   deviceId: string;
-  timestamp: number;
   temperature_c: number;
   humidity_pct: number;
   pressure_hpa: number;

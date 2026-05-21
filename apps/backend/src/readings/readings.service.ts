@@ -3,7 +3,7 @@ import { CreateReadingDto } from './dto/create-reading.dto';
 import { UpdateReadingDto } from './dto/update-reading.dto';
 import { Reading } from './entities/reading.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 
 @Injectable()
 export class ReadingsService {
@@ -15,7 +15,6 @@ export class ReadingsService {
   async create(createReadingDto: CreateReadingDto): Promise<Reading> {
     const newReading: Reading = {
       deviceId: createReadingDto.deviceId,
-      timestamp: new Date(createReadingDto.timestamp * 1000),
       createdAt: new Date(),
       temperature_c: createReadingDto.temperature_c,
       humidity_pct: createReadingDto.humidity_pct,
@@ -26,6 +25,34 @@ export class ReadingsService {
     };
 
     return await this.readingsRepository.save(newReading);
+  }
+
+  async findDeviceReadings(
+    deviceId: string,
+    from: string,
+    to: string,
+    limit: number,
+  ): Promise<Reading[]> {
+    let deviceReadings: Reading[] = [];
+
+    if (from) {
+      deviceReadings = await this.readingsRepository.find({
+        where: {
+          deviceId: deviceId,
+          createdAt: Between(new Date(from), new Date(to)),
+        },
+        take: limit,
+      });
+    } else {
+      deviceReadings = await this.readingsRepository.find({
+        where: {
+          deviceId: deviceId,
+        },
+        take: limit,
+      });
+    }
+
+    return deviceReadings;
   }
 
   findAll(): Promise<Reading[]> {
