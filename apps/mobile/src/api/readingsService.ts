@@ -24,3 +24,25 @@ export const postReading = async (
     console.log(error);
   }
 };
+
+export const getReadings = async (
+  deviceId: string,
+  from: string,
+  to: string,
+) => {
+  try {
+    console.log("device id", deviceId);
+
+    const response = await instance.get("readings", {
+      params: {
+        deviceId: deviceId,
+        from: from,
+        to: to,
+      },
+    });
+    console.log("responses", response.data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

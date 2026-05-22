@@ -41,14 +41,14 @@ export class ReadingsService {
           deviceId: deviceId,
           createdAt: Between(new Date(from), new Date(to)),
         },
-        take: limit,
+        ...(limit ? { take: limit } : {}),
       });
     } else {
       deviceReadings = await this.readingsRepository.find({
         where: {
           deviceId: deviceId,
         },
-        take: limit,
+        ...(limit ? { take: limit } : {}),
       });
     }
 

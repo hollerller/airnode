@@ -14,13 +14,16 @@ type Device = {
 
 type deviceStoreTypes = {
   devices: Device[];
+  deviceId: string;
   setDevices: (devices: Device[]) => void;
   addDevice: (device: Device) => void;
   removeDevice: (deviceId: string) => void;
+  setConnectedDevice: (deviceId: string) => void;
 };
 
 export const deviceStore = create<deviceStoreTypes>((set) => ({
   devices: [],
+  deviceId: "",
 
   setDevices: (devices: Device[]) =>
     set((state) => ({
@@ -36,4 +39,10 @@ export const deviceStore = create<deviceStoreTypes>((set) => ({
     set((state) => ({
       devices: state.devices.filter((device) => device.deviceId !== deviceId),
     })),
+
+  setConnectedDevice: (deviceId: string) => {
+    set((state) => ({
+      deviceId: deviceId,
+    }));
+  },
 }));
