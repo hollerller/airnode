@@ -3,6 +3,7 @@ import Ionicons from "@expo/vector-icons/MaterialIcons";
 import { getReadings } from "../api/readingsService";
 import { deviceStore } from "../stores/deviceStore";
 import { useEffect, useState } from "react";
+import { LineChart } from "react-native-gifted-charts";
 
 type sensorReading = {
   id: number | null;
@@ -44,6 +45,15 @@ export function DashboardScreen() {
     })();
   }, [connectedDevice]);
 
+  const chartData = readings?.map((r) => ({
+    value: r.temperature_c ?? 0,
+    label: r.createdAt
+      ? new Date(r.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "",
+  }));
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text style={{ fontSize: 32 }}>Dashboard Screen</Text>
@@ -56,6 +66,8 @@ export function DashboardScreen() {
         }}
       >
         <Text style={{ fontSize: 32 }}>Under construction</Text>
+
+        <LineChart data={chartData} />
 
         <Ionicons name="construction" size={46} color="#3ED975" />
       </View>
