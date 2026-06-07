@@ -64,7 +64,7 @@ It is designed as a complete end to end IoT product, from embedded firmware to c
 | Firmware       | C · Zephyr RTOS · nRF Connect SDK                   |
 | Protocols      | BLE 5.0 · I2C                                       |
 | Mobile         | React Native · TypeScript · Kotlin (native modules) |
-| Backend        | NestJS · PostgreSQL · InfluxDB · Redis              |
+| Backend        | NestJS · PostgreSQL · InfluxDB                      |
 | Infrastructure | Fly.io · GitHub Actions · Cloudflare                |
 
 ---
