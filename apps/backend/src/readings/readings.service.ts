@@ -41,6 +41,7 @@ export class ReadingsService {
           deviceId: deviceId,
           createdAt: Between(new Date(from), new Date(to)),
         },
+        order: { createdAt: 'DESC' },
         ...(limit ? { take: limit } : {}),
       });
     } else {
@@ -48,11 +49,12 @@ export class ReadingsService {
         where: {
           deviceId: deviceId,
         },
+        order: { createdAt: 'DESC' },
         ...(limit ? { take: limit } : {}),
       });
     }
 
-    return deviceReadings;
+    return deviceReadings.reverse();
   }
 
   findAll(): Promise<Reading[]> {
