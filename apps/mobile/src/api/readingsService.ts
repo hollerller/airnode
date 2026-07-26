@@ -31,8 +31,6 @@ export const getReadings = async (
   to: string,
 ) => {
   try {
-    console.log("device id", deviceId);
-
     const response = await instance.get("readings", {
       params: {
         deviceId: deviceId,
@@ -40,7 +38,6 @@ export const getReadings = async (
         to: to,
       },
     });
-    console.log("responses", response.data);
     return response.data;
   } catch (error) {
     console.log(error);

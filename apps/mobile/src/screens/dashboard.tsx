@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import Ionicons from "@expo/vector-icons/MaterialIcons";
 import { getReadings } from "../api/readingsService";
 import { deviceStore } from "../stores/deviceStore";
@@ -19,13 +19,45 @@ type sensorReading = {
   pm10_ugm3: number | null;
 };
 
+type RangeProps = { name: string; onPress: () => void; isSelected: boolean };
+
+const RangeItem = ({ name, onPress, isSelected }: RangeProps) => (
+  <Pressable
+    onPress={onPress}
+    style={({ pressed }) => [
+      {
+        opacity: pressed ? 0.6 : 1,
+        padding: 15,
+        borderRadius: 8,
+        marginBottom: 10,
+      },
+    ]}
+  >
+    <View style={[styles.item, isSelected && styles.activeItem]}>
+      <Text>{name}</Text>
+    </View>
+  </Pressable>
+);
+
 export function DashboardScreen() {
   const [connectedDevice, setConnectedDevice] = useState(
     () => deviceStore.getState().deviceId,
   );
   const [readings, setReadings] = useState<sensorReading[] | null>(null);
+  const [range, setRange] = useState<number>(24);
 
-  console.log(readings);
+  function rangeInMs(range: number) {
+    return range * 60 * 60 * 1000;
+  }
+
+  const rangeList = [
+    { label: "1h", hours: 1 },
+    { label: "24h", hours: 24 },
+    { label: "7d", hours: 168 },
+    { label: "30d", hours: 720 },
+  ];
+
+  console.log(range);
 
   useEffect(() => {
     return deviceStore.subscribe((state) => {
@@ -38,7 +70,7 @@ export function DashboardScreen() {
       (async () => {
         const to = Date.now();
 
-        const from = Date.now() - 24 * 60 * 60 * 1000;
+        const from = Date.now() - rangeInMs(range);
 
         const readings = await getReadings(
           connectedDevice,
@@ -48,7 +80,7 @@ export function DashboardScreen() {
 
         setReadings(readings);
       })();
-    }, [connectedDevice]),
+    }, [connectedDevice, range]),
   );
 
   const chartData = readings?.map((r, index) => ({
@@ -66,6 +98,16 @@ export function DashboardScreen() {
       style={{ flex: 1, alignItems: "center", justifyContent: "flex-start" }}
     >
       <Text style={{ fontSize: 32, marginTop: 100 }}>Dashboard Screen</Text>
+      <View style={{ flexDirection: "row" }}>
+        {rangeList.map((r) => (
+          <RangeItem
+            key={r.label}
+            name={r.label}
+            onPress={() => setRange(r.hours)}
+            isSelected={r.hours === range}
+          ></RangeItem>
+        ))}
+      </View>
       <View
         style={{
           marginTop: 100,
@@ -107,3 +149,21 @@ export function DashboardScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  item: {
+    backgroundColor: "#00ffc8fd",
+    padding: 12,
+    borderRadius: 20,
+    alignSelf: "center",
+    paddingHorizontal: 20,
+  },
+
+  activeItem: {
+    backgroundColor: "red",
+    padding: 12,
+    borderRadius: 20,
+    alignSelf: "center",
+    paddingHorizontal: 20,
+  },
+});
