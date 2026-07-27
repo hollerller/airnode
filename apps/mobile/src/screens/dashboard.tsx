@@ -1,5 +1,4 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
-import Ionicons from "@expo/vector-icons/MaterialIcons";
 import { getReadings } from "../api/readingsService";
 import { deviceStore } from "../stores/deviceStore";
 import { useEffect, useState } from "react";
@@ -50,14 +49,32 @@ export function DashboardScreen() {
     return range * 60 * 60 * 1000;
   }
 
+  function formatLabel(createdAt: Date, range: number): string {
+    let formattedLabel = "";
+
+    if (range > 24) {
+      formattedLabel = createdAt.toLocaleString([], {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      formattedLabel = createdAt.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    return formattedLabel;
+  }
+
   const rangeList = [
     { label: "1h", hours: 1 },
     { label: "24h", hours: 24 },
     { label: "7d", hours: 168 },
     { label: "30d", hours: 720 },
   ];
-
-  console.log(range);
 
   useEffect(() => {
     return deviceStore.subscribe((state) => {
@@ -87,10 +104,7 @@ export function DashboardScreen() {
     value: r.temperature_c ?? 0,
     label:
       index % 4 == 0 && r.createdAt
-        ? new Date(r.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
+        ? formatLabel(new Date(r.createdAt), range)
         : "",
   }));
   return (
@@ -133,8 +147,8 @@ export function DashboardScreen() {
           yAxisColor="black"
           xAxisColor="black"
           rotateLabel
-          xAxisLabelsVerticalShift={8}
-          labelsExtraHeight={20}
+          xAxisLabelsVerticalShift={10}
+          labelsExtraHeight={60}
           xAxisLabelTextStyle={{
             color: "black",
             fontSize: 11,
