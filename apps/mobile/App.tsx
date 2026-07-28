@@ -43,7 +43,15 @@ const Tab = createBottomTabNavigator();
 function MainTabs() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen
+        name="Dashboard"
+        component={DashboardScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="ssid-chart" size={24} color="blue" />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Devices"
         component={DevicesScreen}
@@ -54,7 +62,7 @@ function MainTabs() {
                 style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
               >
                 <Text
-                  style={{ fontSize: 36, fontWeight: "bold", color: "#171823" }}
+                  style={{ fontSize: 30, fontWeight: "bold", color: "#171823" }}
                 >
                   Devices
                 </Text>
@@ -66,9 +74,20 @@ function MainTabs() {
               </View>
             );
           },
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="device-thermostat" size={24} color="blue" />
+          ),
         }}
       />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="app-settings-alt" size={24} color="blue" />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
