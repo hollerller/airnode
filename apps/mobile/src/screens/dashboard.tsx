@@ -5,18 +5,10 @@ import { useEffect, useState } from "react";
 import { LineChart } from "react-native-gifted-charts";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useCallback } from "react";
-
-type sensorReading = {
-  id: number | null;
-  deviceId: string | null;
-  createdAt: Date | null;
-  temperature_c: number | null;
-  humidity_pct: number | null;
-  pressure_hpa: number | null;
-  pm1_0_ugm3: number | null;
-  pm2_5_ugm3: number | null;
-  pm10_ugm3: number | null;
-};
+import { sensorReading } from "../utils/sensorReading";
+import { readingsToCSV } from "../utils/csvExport";
+import { File, Paths } from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 type RangeProps = { name: string; onPress: () => void; isSelected: boolean };
 
@@ -134,6 +126,22 @@ export function DashboardScreen() {
     return range * 60 * 60 * 1000;
   }
 
+  const handleCSVExport = async () => {
+    if (!readings) return;
+
+    const csv = readingsToCSV(readings);
+
+    try {
+      const file = new File(Paths.cache, `airnode_${Date.now()}.csv`);
+      file.create();
+      file.write(csv, { encoding: "utf8" });
+
+      await Sharing.shareAsync(file.uri);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const rangeList = [
     { label: "1h", hours: 1 },
     { label: "24h", hours: 24 },
@@ -212,6 +220,12 @@ export function DashboardScreen() {
           ></RangeItem>
         ))}
       </View>
+      <Pressable
+        onPress={handleCSVExport}
+        style={{ backgroundColor: "#80aee1", padding: 10, borderRadius: 8 }}
+      >
+        <Text style={{ color: "white", fontWeight: "bold" }}>Download CSV</Text>
+      </Pressable>
       <ScrollView>
         {sensorList.map((s) => (
           <SensorChart
