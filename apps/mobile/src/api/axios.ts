@@ -2,7 +2,7 @@ import axios from "axios";
 import { authStore } from "../stores/authStore";
 
 export const instance = axios.create({
-  baseURL: "http://192.168.1.71:3000/",
+  baseURL: "http://192.168.1.74:3000/",
   timeout: 10000,
 });
 

@@ -21,7 +21,7 @@ It is designed as a complete end to end IoT product, from embedded firmware to c
 
 - 🌡️ Temperature, humidity and pressure (BME680)
 - 💨 PM1.0, PM2.5 and PM10 particulate matter (PMSA003I)
-- 📱 iOS and Android app — real-time dashboard, historical charts, device config
+- 📱 Android app — real-time dashboard, historical charts, device config
 - 🔵 BLE connection — scan, connect, and read sensor data in real time
 - ☁️ Cloud backend with auth, device registry, and data storage
 - 🔋 Ultra low-power design — ~15 µA average current at 5-min intervals
@@ -59,13 +59,13 @@ It is designed as a complete end to end IoT product, from embedded firmware to c
 
 ## Tech Stack
 
-| Layer          | Technology                                          |
-| -------------- | --------------------------------------------------- |
-| Firmware       | C · Zephyr RTOS · nRF Connect SDK                   |
-| Protocols      | BLE 5.0 · I2C                                       |
-| Mobile         | React Native · TypeScript · Kotlin (native modules) |
-| Backend        | NestJS · PostgreSQL · InfluxDB · Redis              |
-| Infrastructure | Fly.io · GitHub Actions · Cloudflare                |
+| Layer          | Technology                           |
+| -------------- | ------------------------------------ |
+| Firmware       | C · Zephyr RTOS · nRF Connect SDK    |
+| Protocols      | BLE 5.0 · I2C                        |
+| Mobile         | React Native · TypeScript            |
+| Backend        | NestJS · PostgreSQL                  |
+| Infrastructure | Fly.io · GitHub Actions · Cloudflare |
 
 ---
 
@@ -87,19 +87,20 @@ airnode/
 
 This project is currently in active development. Follow the progress through commits.
 
-| Phase            | Description                | Status         |
-| ---------------- | -------------------------- | -------------- |
-| Firmware Phase 1 | MCU Low Power              | ✅ Complete    |
-| Firmware Phase 2 | BME680 sensor              | ✅ Complete    |
-| Firmware Phase 3 | BLE Minimal                | ✅ Complete    |
-| Firmware Phase 4 | PMSA003I sensor            | ✅ Complete    |
-| Firmware Phase 5 | System Integration         | ✅ Complete    |
-| Backend          | Auth + Device Registry     | ✅ Complete    |
-| Mobile App       | Auth + BLE Provisioning    | ✅ Complete    |
-| Data Pipeline    | App → HTTP → Backend → DB  | ✅ Complete    |
-| Dashboard        | Historical data + Charts   | 🔄 In progress |
-| MVP Demo         | End-to-end working product | ⚪ Pending     |
-| Hardware         | Custom PCB (KiCad)         | ⚪ Pending     |
+| Phase            | Description                 | Status         |
+| ---------------- | --------------------------- | -------------- |
+| Firmware Phase 1 | MCU Low Power               | ✅ Complete    |
+| Firmware Phase 2 | BME680 sensor               | ✅ Complete    |
+| Firmware Phase 3 | BLE Minimal                 | ✅ Complete    |
+| Firmware Phase 4 | PMSA003I sensor             | ✅ Complete    |
+| Firmware Phase 5 | System Integration          | ✅ Complete    |
+| Backend          | Auth + Device Registry      | ✅ Complete    |
+| Mobile App       | Auth + BLE Provisioning     | ✅ Complete    |
+| Data Pipeline    | App → HTTP → Backend → DB   | ✅ Complete    |
+| Dashboard        | Historical data + Charts    | ✅ Complete    |
+| Device Config    | Settings API + BLE commands | 🔄 In progress |
+| MVP Demo         | End-to-end working product  | ⚪ Pending     |
+| Hardware         | Custom PCB (KiCad)          | ⚪ Pending     |
 
 ---
 

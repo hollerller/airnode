@@ -13,6 +13,7 @@ import { useState, useRef, useEffect } from "react";
 import { Device } from "react-native-ble-plx";
 import { Buffer } from "buffer";
 import { postReading } from "../api/readingsService";
+import { deviceStore } from "../stores/deviceStore";
 
 type senseorReading = {
   temperature_c: number | null;
@@ -22,6 +23,26 @@ type senseorReading = {
   pm2_5_ugm3: number | null;
   pm10_ugm3: number | null;
 };
+
+type DeviceProps = { name: string; onPress: () => void };
+
+const DeviceItem = ({ name, onPress }: DeviceProps) => (
+  <Pressable
+    onPress={onPress}
+    style={({ pressed }) => [
+      {
+        opacity: pressed ? 0.6 : 1,
+        padding: 15,
+        borderRadius: 8,
+        marginBottom: 10,
+      },
+    ]}
+  >
+    <View style={styles.item}>
+      <Text style={styles.title}>{name}</Text>
+    </View>
+  </Pressable>
+);
 
 export function DevicesScreen() {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -61,26 +82,6 @@ export function DevicesScreen() {
       }, 9000);
     }
   }, [sensorData]);
-
-  type DeviceProps = { name: string; onPress: () => void };
-
-  const DeviceItem = ({ name, onPress }: DeviceProps) => (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        {
-          opacity: pressed ? 0.6 : 1,
-          padding: 15,
-          borderRadius: 8,
-          marginBottom: 10,
-        },
-      ]}
-    >
-      <View style={styles.item}>
-        <Text style={styles.title}>{name}</Text>
-      </View>
-    </Pressable>
-  );
 
   const onClick = async () => {
     const bluetoothPermission = await requestBluetoothPermission();
@@ -126,6 +127,8 @@ export function DevicesScreen() {
 
     const essService = services.find((s) => s.uuid.includes("181a"));
     if (!essService) return;
+
+    deviceStore.getState().setConnectedDevice(itemId);
 
     const characteristics = await manager.characteristicsForDevice(
       itemId,

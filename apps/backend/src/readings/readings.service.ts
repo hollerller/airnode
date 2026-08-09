@@ -41,18 +41,20 @@ export class ReadingsService {
           deviceId: deviceId,
           createdAt: Between(new Date(from), new Date(to)),
         },
-        take: limit,
+        order: { createdAt: 'DESC' },
+        ...(limit ? { take: limit } : {}),
       });
     } else {
       deviceReadings = await this.readingsRepository.find({
         where: {
           deviceId: deviceId,
         },
-        take: limit,
+        order: { createdAt: 'DESC' },
+        ...(limit ? { take: limit } : {}),
       });
     }
 
-    return deviceReadings;
+    return deviceReadings.reverse();
   }
 
   findAll(): Promise<Reading[]> {
