@@ -171,7 +171,7 @@ int main(void)
 
                 full_reading.temperature_c = temp.val1 * 100 + temp.val2 / 10000;
                 full_reading.humidity_pct = hum.val1 * 100 + hum.val2 / 10000;
-                full_reading.pressure_hpa = press.val1 * 100 + press.val2 / 10000;
+                full_reading.pressure_hpa = press.val1 * 10 + press.val2 / 100000;
                 full_reading.pm1_0_ugm3 = pmsa003i_data_raw.pm1_0;
                 full_reading.pm2_5_ugm3 = pmsa003i_data_raw.pm2_5;
                 full_reading.pm10_ugm3 = pmsa003i_data_raw.pm10_0;

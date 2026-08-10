@@ -178,7 +178,7 @@ export function DevicesScreen() {
 
         setSensorData((prev) => ({
           ...prev,
-          pressure_hpa: pressValue / 100,
+          pressure_hpa: pressValue,
         }));
       },
     );
