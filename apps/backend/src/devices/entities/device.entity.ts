@@ -27,4 +27,10 @@ export class Device {
   user: User;
   @Column({ unique: true })
   deviceToken: string;
+  @Column({ type: 'int', default: 300 })
+  samplingIntervalSec: number;
+  @Column({ nullable: true, type: 'decimal' })
+  temperatureThreshold: number;
+  @Column({ nullable: true, type: 'decimal' })
+  pm25Threshold: number;
 }

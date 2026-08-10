@@ -8,6 +8,7 @@ import { Device } from './entities/device.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto';
+import { UpdateDeviceSettingsDto } from './dto/update-device-settings.dto';
 
 @Injectable()
 export class DevicesService {
@@ -72,6 +73,30 @@ export class DevicesService {
     await this.devicesRepository.save(updatedDevice);
 
     return updatedDevice;
+  }
+
+  async updateSettings(
+    id: string,
+    user: any,
+    updateDeviceSettingsDto: UpdateDeviceSettingsDto,
+  ): Promise<Device> {
+    const device = await this.devicesRepository.findOneBy({
+      user: { id: user.id },
+      deviceId: id,
+    });
+
+    if (!device) {
+      throw new HttpException('Device does not exist', HttpStatus.NOT_FOUND);
+    }
+
+    const updatedDeviceSettings = {
+      ...device,
+      ...updateDeviceSettingsDto,
+    };
+
+    await this.devicesRepository.save(updatedDeviceSettings);
+
+    return updatedDeviceSettings;
   }
 
   async updateStatus(
