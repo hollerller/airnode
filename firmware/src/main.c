@@ -5,6 +5,7 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/gap.h>
+#include <zephyr/bluetooth/conn.h>
 
 #include "sensor_service.h"
 #include "pmsa003i/pmsa003i.h"
@@ -39,6 +40,31 @@ static const struct bt_data ad[] = {
     BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
+static void ble_restart_adv_handler(struct k_work *work)
+{
+        int ret;
+
+        ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ad, ARRAY_SIZE(ad), 0, 0);
+        if (ret)
+        {
+                LOG_ERR("Advertising failed to start (err %d)\n", ret);
+                return;
+        }
+}
+
+K_WORK_DEFINE(ble_restart_work, ble_restart_adv_handler);
+
+void on_disconnected(struct bt_conn *conn, uint8_t reason)
+{
+        LOG_INF("Disconnected. Reason %d", reason);
+        k_work_submit(&ble_restart_work);
+}
+
+struct bt_conn_cb connection_callbacks = {
+    .disconnected = on_disconnected,
+
+};
+
 int main(void)
 {
         int ret;
@@ -51,6 +77,12 @@ int main(void)
         }
 
         LOG_INF("Bluetooth initialized\n");
+
+        ret = bt_conn_cb_register(&connection_callbacks);
+        if (ret)
+        {
+                LOG_ERR("Connection callback register failed (err %d)", ret);
+        }
 
         ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_1, ad, ARRAY_SIZE(ad), 0, 0);
         if (ret)
