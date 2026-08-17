@@ -23,19 +23,22 @@ typedef enum
     PM10
 } SensorDataType;
 
-/** Initial Service UUID - 4cff14aa-fca7-4da8-89d7-952ac08b3085 */
-#define BT_UUID_SENSOR_SERVICE_VAL \
-    BT_UUID_128_ENCODE(0x4cff14aa, 0xfca7, 0x4da8, 0x89d7, 0x952ac08b3085)
+typedef void (*reading_interval_cb_t)(const uint32_t reading_interval_ms);
 
-/** Value Characteristic UUID - 8123e770-73b5-4b07-aa24-99f776d1e37a */
-#define BT_UUID_SENSOR_DATA_VAL \
-    BT_UUID_128_ENCODE(0x8123e770, 0x73b5, 0x4b07, 0xaa24, 0x99f776d1e37a)
+struct sensor_settings_cb
+{
+    reading_interval_cb_t reading_interval_cb;
+};
+
+/** Value Characteristic UUID - d87f823c-4c33-4ddd-9ac4-4ada6ad5e913 */
+#define BT_UUID_SENSOR_SETTINGS_VAL \
+    BT_UUID_128_ENCODE(0xd87f823c, 0x4c33, 0x4ddd, 0x9ac4, 0x4ada6ad5e913)
 
 /** Convert the array to a generic UUID */
 
-#define BT_UUID_SENSOR BT_UUID_DECLARE_128(BT_UUID_SENSOR_SERVICE_VAL)
-#define BT_UUID_SENSOR_DATA BT_UUID_DECLARE_128(BT_UUID_SENSOR_DATA_VAL)
+#define BT_UUID_SENSOR_SETTINGS BT_UUID_DECLARE_128(BT_UUID_SENSOR_SETTINGS_VAL)
 
 int send_sensor_notify(struct airnode_readings sensor_value, SensorDataType type);
+int settings_callback_init(struct sensor_settings_cb *callbacks);
 
 #endif // SENSOR_SERVICE_H

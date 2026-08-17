@@ -12,7 +12,6 @@
 
 #define RETRY_DELAY_MS 10000
 #define WARM_UP_INTERVAL_MS 10000
-#define WAKE_UP_INTERVAL 10000
 
 #define LED0_NODE DT_ALIAS(led0)
 #define I2C_NODE DT_NODELABEL(bme680)
@@ -26,6 +25,8 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 static const struct device *const dev_i2c = DEVICE_DT_GET(I2C_NODE);
 static const pmsa003i_config_t pmsa003i_config = {
     .i2c = I2C_DT_SPEC_GET(I2C_PMSA003I_NODE)};
+
+static uint32_t wake_up_interval = 300000; // Default wake-up interval in milliseconds
 
 static struct sensor_value temp;
 static struct sensor_value hum;
@@ -65,6 +66,12 @@ struct bt_conn_cb connection_callbacks = {
 
 };
 
+static void on_reading_interval_changed(const uint32_t reading_interval_ms)
+{
+        wake_up_interval = reading_interval_ms;
+        LOG_INF("Wake-up interval updated to %u ms", wake_up_interval);
+}
+
 int main(void)
 {
         int ret;
@@ -88,6 +95,17 @@ int main(void)
         if (ret)
         {
                 LOG_ERR("Advertising failed to start (err %d)\n", ret);
+                return -1;
+        }
+
+        struct sensor_settings_cb settings_callback = {
+            .reading_interval_cb = on_reading_interval_changed,
+        };
+
+        ret = settings_callback_init(&settings_callback);
+        if (ret)
+        {
+                LOG_ERR("Failed to read settings callback (err %d)", ret);
                 return -1;
         }
 
@@ -225,6 +243,6 @@ int main(void)
 
                 gpio_pin_toggle_dt(&led);
                 // bt_le_adv_stop();
-                k_sleep(K_MSEC(WAKE_UP_INTERVAL));
+                k_sleep(K_MSEC(wake_up_interval));
         }
 }
