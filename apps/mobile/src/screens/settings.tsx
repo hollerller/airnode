@@ -24,7 +24,17 @@ export function SettingsScreen() {
 
     const deviceId = deviceStore.getState().deviceId;
 
-    if (intervalInMin < 1 || intervalInMin > 30) return;
+    if (
+      intervalInMin < 1 ||
+      intervalInMin > 30 ||
+      Number.isNaN(intervalInMin)
+    ) {
+      Alert.alert(
+        "Out of range",
+        "The number must be between 1 and 30 minutes",
+      );
+      return;
+    }
 
     const buf = Buffer.alloc(4);
 

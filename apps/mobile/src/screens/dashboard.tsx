@@ -225,6 +225,7 @@ export function DashboardScreen() {
       <Pressable onPress={handleCSVExport} style={styles.csvButton}>
         <Text style={styles.csvButtonText}>Download CSV</Text>
       </Pressable>
+      {!readings && <Text>Data could not be loaded</Text>}
       <ScrollView>
         {sensorList.map((s) => (
           <SensorChart

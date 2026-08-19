@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, Button } from "react-native";
+import { View, Text, TextInput, StyleSheet, Button, Alert } from "react-native";
 import React from "react";
 import { login } from "../api/authService";
 import { authStore } from "../stores/authStore";
@@ -16,14 +16,26 @@ export function LoginScreen() {
   const navigation = useNavigation();
 
   const onClick = async () => {
-    const response = await login(email, password);
+    try {
+      const response = await login(email, password);
 
-    if (response) {
-      const { accessToken, refreshToken } = response;
+      if (response) {
+        const { accessToken, refreshToken } = response;
 
-      authStore.getState().login(accessToken, refreshToken);
-      save("accessToken", accessToken);
-      save("refreshToken", refreshToken);
+        authStore.getState().login(accessToken, refreshToken);
+        save("accessToken", accessToken);
+        save("refreshToken", refreshToken);
+      }
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status == 401) {
+          Alert.alert("Error", "Authentication error");
+        } else {
+          Alert.alert("Error", "Something went wrong");
+        }
+      } else {
+        Alert.alert("Error", "Network error");
+      }
     }
   };
 
