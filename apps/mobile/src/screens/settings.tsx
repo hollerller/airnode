@@ -1,5 +1,10 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, TextInput, Alert, StyleSheet } from "react-native";
 import { authStore } from "../stores/authStore";
+import { useState } from "react";
+import { patchDeviceSettings } from "../api/deviceService";
+import { manager } from "../ble/bleManager";
+import { deviceStore } from "../stores/deviceStore";
+import { Buffer } from "buffer";
 
 import * as SecureStore from "expo-secure-store";
 
@@ -9,6 +14,51 @@ export function SettingsScreen() {
     SecureStore.deleteItemAsync("accessToken");
     SecureStore.deleteItemAsync("refreshToken");
   };
+
+  const onUpdateSamplingInterval = async () => {
+    const intervalInMin = parseInt(samplingInterval, 10);
+
+    const intervalInSec = intervalInMin * 60;
+
+    const intervalInMs = intervalInSec * 1000;
+
+    const deviceId = deviceStore.getState().deviceId;
+
+    if (intervalInMin < 1 || intervalInMin > 30) return;
+
+    const buf = Buffer.alloc(4);
+
+    buf.writeUint32LE(intervalInMs, 0);
+
+    const base64Data = buf.toString("base64");
+
+    patchDeviceSettings(deviceId, intervalInSec);
+
+    const services = await manager.servicesForDevice(deviceId);
+    const essService = services.find((s) => s.uuid.includes("181a"));
+    if (!essService) return;
+
+    const characteristics = await manager.characteristicsForDevice(
+      deviceId,
+      essService.uuid,
+    );
+
+    manager.writeCharacteristicWithResponseForDevice(
+      deviceId,
+      essService.uuid,
+      characteristics[6].uuid,
+      base64Data,
+    );
+  };
+
+  const [samplingInterval, setSamplingInterval] = useState<string>("");
+
+  const handleChangeText = (inputText: string) => {
+    const cleanNumber = inputText.replace(/[^0-9]/g, "");
+
+    setSamplingInterval(cleanNumber);
+  };
+  console.log(samplingInterval);
 
   return (
     <View
@@ -20,7 +70,36 @@ export function SettingsScreen() {
       }}
     >
       <Text style={{ fontSize: 30, fontWeight: "bold" }}>Settings Screen</Text>
+
+      <View>
+        <Text style={{ fontSize: 20 }}>Set sampling interval</Text>
+
+        <TextInput
+          style={styles.input}
+          onChangeText={handleChangeText}
+          value={samplingInterval}
+          placeholder="From 1 to 30 min"
+          placeholderTextColor="#100202"
+          keyboardType="numeric"
+        ></TextInput>
+
+        <Button
+          onPress={onUpdateSamplingInterval}
+          title="Submit"
+          color="#841584"
+        ></Button>
+      </View>
+
       <Button onPress={onClick} title="Logout" color="#841584"></Button>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+});

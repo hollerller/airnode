@@ -32,7 +32,9 @@ const RangeItem = ({ name, onPress, isSelected }: RangeProps) => (
     ]}
   >
     <View style={[styles.item, isSelected && styles.activeItem]}>
-      <Text>{name}</Text>
+      <Text style={isSelected ? styles.activeItemText : styles.itemText}>
+        {name}
+      </Text>
     </View>
   </Pressable>
 );
@@ -209,7 +211,7 @@ export function DashboardScreen() {
     <View
       style={{ flex: 1, alignItems: "center", justifyContent: "flex-start" }}
     >
-      <Text style={{ fontSize: 32, marginTop: 100 }}>Dashboard Screen</Text>
+      <Text style={styles.title}>Air Quality Dashboard</Text>
       <View style={{ flexDirection: "row" }}>
         {rangeList.map((r) => (
           <RangeItem
@@ -220,11 +222,8 @@ export function DashboardScreen() {
           ></RangeItem>
         ))}
       </View>
-      <Pressable
-        onPress={handleCSVExport}
-        style={{ backgroundColor: "#80aee1", padding: 10, borderRadius: 8 }}
-      >
-        <Text style={{ color: "white", fontWeight: "bold" }}>Download CSV</Text>
+      <Pressable onPress={handleCSVExport} style={styles.csvButton}>
+        <Text style={styles.csvButtonText}>Download CSV</Text>
       </Pressable>
       <ScrollView>
         {sensorList.map((s) => (
@@ -241,9 +240,18 @@ export function DashboardScreen() {
   );
 }
 
+const ACCENT_COLOR = "#0f766e";
+
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 32,
+    fontWeight: "600",
+    marginTop: 140,
+    color: "#1f2937",
+  },
+
   item: {
-    backgroundColor: "#00ffc8fd",
+    backgroundColor: "#e5e7eb",
     padding: 12,
     borderRadius: 20,
     alignSelf: "center",
@@ -251,10 +259,30 @@ const styles = StyleSheet.create({
   },
 
   activeItem: {
-    backgroundColor: "red",
+    backgroundColor: ACCENT_COLOR,
     padding: 12,
     borderRadius: 20,
     alignSelf: "center",
     paddingHorizontal: 20,
+  },
+
+  itemText: {
+    color: "#374151",
+  },
+
+  activeItemText: {
+    color: "white",
+    fontWeight: "600",
+  },
+
+  csvButton: {
+    backgroundColor: ACCENT_COLOR,
+    padding: 10,
+    borderRadius: 20,
+  },
+
+  csvButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
