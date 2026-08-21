@@ -25,9 +25,12 @@ export const authStore = create<authStoreTypes>((set) => ({
     const deviceId = deviceStore.getState().deviceId;
 
     if (deviceId) {
-      await manager.cancelDeviceConnection(deviceId);
-
-      console.log("Device disconnected");
+      try {
+        await manager.cancelDeviceConnection(deviceId);
+        console.log("Device disconnected");
+      } catch (error) {
+        console.error("Problem disconnecting device ", error);
+      }
     }
 
     set({

@@ -44,21 +44,28 @@ export function SettingsScreen() {
 
     patchDeviceSettings(deviceId, intervalInSec);
 
-    const services = await manager.servicesForDevice(deviceId);
-    const essService = services.find((s) => s.uuid.includes("181a"));
-    if (!essService) return;
+    try {
+      const services = await manager.servicesForDevice(deviceId);
+      const essService = services.find((s) => s.uuid.includes("181a"));
+      if (!essService) return;
 
-    const characteristics = await manager.characteristicsForDevice(
-      deviceId,
-      essService.uuid,
-    );
+      const characteristics = await manager.characteristicsForDevice(
+        deviceId,
+        essService.uuid,
+      );
 
-    manager.writeCharacteristicWithResponseForDevice(
-      deviceId,
-      essService.uuid,
-      characteristics[6].uuid,
-      base64Data,
-    );
+      manager.writeCharacteristicWithResponseForDevice(
+        deviceId,
+        essService.uuid,
+        characteristics[6].uuid,
+        base64Data,
+      );
+    } catch (error) {
+      Alert.alert(
+        "Problem saving settings",
+        "Retry connecting to your device and try again",
+      );
+    }
   };
 
   const [samplingInterval, setSamplingInterval] = useState<string>("");
