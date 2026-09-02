@@ -82,41 +82,59 @@ export function SettingsScreen() {
       style={{
         flex: 1,
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
+        paddingTop: 56,
         gap: 30,
       }}
     >
-      <Text style={{ fontSize: 30, fontWeight: "bold" }}>Settings Screen</Text>
+      <Text style={styles.title}>Settings Screen</Text>
 
       <View>
-        <Text style={{ fontSize: 20 }}>Set sampling interval</Text>
+        <Text style={styles.label}>Set sampling interval</Text>
 
         <TextInput
           style={styles.input}
           onChangeText={handleChangeText}
           value={samplingInterval}
           placeholder="From 1 to 30 min"
-          placeholderTextColor="#100202"
+          placeholderTextColor={NEUTRAL_GRAY}
           keyboardType="numeric"
         ></TextInput>
 
         <Button
           onPress={onUpdateSamplingInterval}
           title="Submit"
-          color="#841584"
+          color={ACCENT_COLOR}
         ></Button>
       </View>
 
-      <Button onPress={onClick} title="Logout" color="#841584"></Button>
+      <Button onPress={onClick} title="Logout" color={ACCENT_COLOR}></Button>
     </View>
   );
 }
 
+const ACCENT_COLOR = "#1A9E6E";
+const PRIMARY_TEXT = "#1F2937";
+const NEUTRAL_GRAY = "#6B7280";
+
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: PRIMARY_TEXT,
+  },
+  label: {
+    fontSize: 20,
+    color: PRIMARY_TEXT,
+  },
   input: {
-    height: 40,
+    height: 44,
     margin: 12,
     borderWidth: 1,
-    padding: 10,
+    borderColor: "#E5E7EB",
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    color: PRIMARY_TEXT,
   },
 });
