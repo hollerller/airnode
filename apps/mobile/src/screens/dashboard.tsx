@@ -29,6 +29,7 @@ const RangeItem = ({ name, onPress, isSelected }: RangeProps) => (
         padding: 15,
         borderRadius: 8,
         marginBottom: 10,
+        marginHorizontal: 4,
       },
     ]}
   >
@@ -81,18 +82,8 @@ const SensorChart = ({
   const label = range > 24 ? "Date" : "Hour";
 
   return (
-    <View
-      style={{
-        marginTop: 100,
-        paddingRight: 32,
-      }}
-    >
-      <Text
-        style={{
-          marginBottom: 10,
-        }}
-        numberOfLines={1}
-      >
+    <View style={styles.card}>
+      <Text style={styles.cardTitle} numberOfLines={1}>
         {title}
       </Text>
       <LineChart
@@ -115,7 +106,7 @@ const SensorChart = ({
           transform: [{ rotate: "300deg" }],
         }}
       />
-      <Text style={{ textAlign: "center" }} numberOfLines={1}>
+      <Text style={[styles.caption, { textAlign: "center" }]} numberOfLines={1}>
         {label}
       </Text>
     </View>
@@ -217,6 +208,19 @@ export function DashboardScreen() {
       style={{ flex: 1, alignItems: "center", justifyContent: "flex-start" }}
     >
       <Text style={styles.title}>Air Quality Dashboard</Text>
+      <View style={styles.statusRow}>
+        <View
+          style={[
+            styles.statusDot,
+            connectedDevice
+              ? styles.statusDotConnected
+              : styles.statusDotDisconnected,
+          ]}
+        />
+        <Text style={styles.statusText}>
+          {connectedDevice ? "AirNode connected" : "AirNode disconnected"}
+        </Text>
+      </View>
       <View style={{ flexDirection: "row" }}>
         {rangeList.map((r) => (
           <RangeItem
@@ -230,7 +234,9 @@ export function DashboardScreen() {
       <Pressable onPress={handleCSVExport} style={styles.csvButton}>
         <Text style={styles.csvButtonText}>Download CSV</Text>
       </Pressable>
-      {!readings && <Text>Data could not be loaded</Text>}
+      {!readings && (
+        <Text style={styles.errorText}>Data could not be loaded</Text>
+      )}
       <ScrollView>
         {sensorList.map((s) => (
           <SensorChart
@@ -246,14 +252,44 @@ export function DashboardScreen() {
   );
 }
 
-const ACCENT_COLOR = "#0f766e";
+const ACCENT_COLOR = "#1A9E6E";
+const MINT_COLOR = "#38E8A0";
+const NEUTRAL_GRAY = "#6B7280";
+const ERROR_COLOR = "#FF6262";
 
 const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "600",
-    marginTop: 140,
+    marginTop: 56,
+    marginBottom: 12,
     color: "#1f2937",
+  },
+
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+
+  statusDotConnected: {
+    backgroundColor: MINT_COLOR,
+  },
+
+  statusDotDisconnected: {
+    backgroundColor: "#9ca3af",
+  },
+
+  statusText: {
+    fontSize: 13,
+    color: NEUTRAL_GRAY,
   },
 
   item: {
@@ -285,10 +321,33 @@ const styles = StyleSheet.create({
     backgroundColor: ACCENT_COLOR,
     padding: 10,
     borderRadius: 20,
+    marginBottom: 12,
   },
 
   csvButtonText: {
     color: "white",
     fontWeight: "bold",
+  },
+
+  card: {
+    backgroundColor: "#FAFAFA",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    padding: 16,
+    marginTop: 24,
+  },
+
+  cardTitle: {
+    marginBottom: 10,
+    color: NEUTRAL_GRAY,
+  },
+
+  caption: {
+    color: NEUTRAL_GRAY,
+  },
+
+  errorText: {
+    color: ERROR_COLOR,
   },
 });
