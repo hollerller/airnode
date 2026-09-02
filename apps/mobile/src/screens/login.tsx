@@ -52,11 +52,10 @@ export function LoginScreen() {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        paddingBottom: 120,
+        paddingBottom: 40,
         gap: 20,
       }}
     >
-      <Text style={styles.title}>Login Screen</Text>
       <TextInput
         style={styles.input}
         onChangeText={onChangeEmail}

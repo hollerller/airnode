@@ -207,7 +207,6 @@ export function DashboardScreen() {
     <View
       style={{ flex: 1, alignItems: "center", justifyContent: "flex-start" }}
     >
-      <Text style={styles.title}>Air Quality Dashboard</Text>
       <View style={styles.statusRow}>
         <View
           style={[
@@ -269,6 +268,7 @@ const styles = StyleSheet.create({
   statusRow: {
     flexDirection: "row",
     alignItems: "center",
+    marginTop: 24,
     marginBottom: 16,
   },
 

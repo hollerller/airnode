@@ -1,4 +1,11 @@
-import { View, Text, Button, TextInput, Alert, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  TextInput,
+  Alert,
+  StyleSheet,
+} from "react-native";
 import { authStore } from "../stores/authStore";
 import { useState } from "react";
 import { patchDeviceSettings } from "../api/deviceService";
@@ -83,12 +90,10 @@ export function SettingsScreen() {
         flex: 1,
         alignItems: "center",
         justifyContent: "flex-start",
-        paddingTop: 56,
-        gap: 30,
+        paddingTop: 72,
+        gap: 40,
       }}
     >
-      <Text style={styles.title}>Settings Screen</Text>
-
       <View>
         <Text style={styles.label}>Set sampling interval</Text>
 
@@ -101,14 +106,17 @@ export function SettingsScreen() {
           keyboardType="numeric"
         ></TextInput>
 
-        <Button
+        <Pressable
           onPress={onUpdateSamplingInterval}
-          title="Submit"
-          color={ACCENT_COLOR}
-        ></Button>
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Submit</Text>
+        </Pressable>
       </View>
 
-      <Button onPress={onClick} title="Logout" color={ACCENT_COLOR}></Button>
+      <Pressable onPress={onClick} style={styles.button}>
+        <Text style={styles.buttonText}>Logout</Text>
+      </Pressable>
     </View>
   );
 }
@@ -136,5 +144,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     color: PRIMARY_TEXT,
+  },
+  button: {
+    alignSelf: "center",
+    backgroundColor: ACCENT_COLOR,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    fontSize: 16,
   },
 });

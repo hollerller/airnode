@@ -28,8 +28,6 @@ export function RegisterScreen() {
         gap: 20,
       }}
     >
-      <Text style={styles.title}>Register Screen</Text>
-
       <TextInput
         style={styles.input}
         onChangeText={onChangeName}
@@ -71,7 +69,7 @@ export function RegisterScreen() {
         style={styles.secondaryButton}
       >
         <Text style={styles.secondaryButtonText}>
-          Ya tienes cuenta? Haz login!
+          Already have an account? Login!
         </Text>
       </Pressable>
     </View>
