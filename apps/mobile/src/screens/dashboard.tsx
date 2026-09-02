@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   },
 
   statusText: {
-    fontSize: 13,
+    fontSize: 15,
     color: NEUTRAL_GRAY,
   },
 
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
 
   cardTitle: {
     marginBottom: 10,
-    color: NEUTRAL_GRAY,
+    color: "#1F2937",
   },
 
   caption: {
