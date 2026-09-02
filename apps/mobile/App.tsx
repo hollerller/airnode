@@ -8,7 +8,7 @@ import { DevicesScreen } from "./src/screens/devices";
 import { SettingsScreen } from "./src/screens/settings";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { authStore } from "./src/stores/authStore";
-import { View, StatusBar, Text } from "react-native";
+import { StatusBar } from "react-native";
 
 import * as SecureStore from "expo-secure-store";
 import Ionicons from "@expo/vector-icons/MaterialIcons";
@@ -31,7 +31,13 @@ function RootStack() {
 
 function AuthStack() {
   return (
-    <AuthStackNav.Navigator>
+    <AuthStackNav.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: "#FFFFFF" },
+        headerTitleStyle: { color: "#1F2937" },
+        headerTintColor: "#1A9E6E",
+      }}
+    >
       <AuthStackNav.Screen name="Login" component={LoginScreen} />
       <AuthStackNav.Screen name="Register" component={RegisterScreen} />
     </AuthStackNav.Navigator>
@@ -42,13 +48,19 @@ const Tab = createBottomTabNavigator();
 
 function MainTabs() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: "#1A9E6E",
+        tabBarInactiveTintColor: "#9CA3AF",
+        tabBarStyle: { backgroundColor: "#FFFFFF" },
+      }}
+    >
       <Tab.Screen
         name="Dashboard"
         component={DashboardScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="ssid-chart" size={24} color="blue" />
+            <Ionicons name="ssid-chart" size={24} color={color} />
           ),
         }}
       />
@@ -56,26 +68,8 @@ function MainTabs() {
         name="Devices"
         component={DevicesScreen}
         options={{
-          headerTitle: () => {
-            return (
-              <View
-                style={{ flexDirection: "row", gap: 6, alignItems: "center" }}
-              >
-                <Text
-                  style={{ fontSize: 30, fontWeight: "bold", color: "#171823" }}
-                >
-                  Devices
-                </Text>
-                <Ionicons
-                  name="bluetooth-connected"
-                  size={46}
-                  color="#3ED975"
-                />
-              </View>
-            );
-          },
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="device-thermostat" size={24} color="blue" />
+            <Ionicons name="device-thermostat" size={24} color={color} />
           ),
         }}
       />
@@ -84,7 +78,7 @@ function MainTabs() {
         component={SettingsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="app-settings-alt" size={24} color="blue" />
+            <Ionicons name="app-settings-alt" size={24} color={color} />
           ),
         }}
       />

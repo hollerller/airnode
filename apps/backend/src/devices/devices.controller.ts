@@ -16,6 +16,7 @@ import {
 } from './dto/update-device.dto';
 import { User } from 'src/decorators/user.decorator';
 import { Public } from 'src/decorators/public';
+import { UpdateDeviceSettingsDto } from './dto/update-device-settings.dto';
 @Controller('devices')
 export class DevicesController {
   constructor(private readonly devicesService: DevicesService) {}
@@ -42,6 +43,19 @@ export class DevicesController {
     @Body() updateDeviceStatusDto: UpdateDeviceStatusDto,
   ) {
     return this.devicesService.updateStatus(deviceToken, updateDeviceStatusDto);
+  }
+
+  @Patch(':id/settings')
+  updateSettings(
+    @Param('id') id: string,
+    @User() user: any,
+    @Body() updateDeviceSettingsDto: UpdateDeviceSettingsDto,
+  ) {
+    return this.devicesService.updateSettings(
+      id,
+      user,
+      updateDeviceSettingsDto,
+    );
   }
 
   @Patch(':id')

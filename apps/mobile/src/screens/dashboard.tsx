@@ -9,6 +9,7 @@ import { sensorReading } from "../utils/sensorReading";
 import { readingsToCSV } from "../utils/csvExport";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { downsampleData } from "../utils/downsampleData";
 
 type RangeProps = { name: string; onPress: () => void; isSelected: boolean };
 
@@ -28,11 +29,14 @@ const RangeItem = ({ name, onPress, isSelected }: RangeProps) => (
         padding: 15,
         borderRadius: 8,
         marginBottom: 10,
+        marginHorizontal: 4,
       },
     ]}
   >
     <View style={[styles.item, isSelected && styles.activeItem]}>
-      <Text>{name}</Text>
+      <Text style={isSelected ? styles.activeItemText : styles.itemText}>
+        {name}
+      </Text>
     </View>
   </Pressable>
 );
@@ -65,31 +69,25 @@ const SensorChart = ({
 
   const chartData = readings?.map((r, index) => ({
     value: getValue(r),
-    label:
-      index % 4 == 0 && r.createdAt
-        ? formatLabel(new Date(r.createdAt), range)
-        : "",
+    label: r.createdAt ? formatLabel(new Date(r.createdAt), range) : "",
+  }));
+
+  const sampleData = downsampleData(chartData ?? []);
+
+  const displayData = sampleData.map((point, index) => ({
+    ...point,
+    label: index % 4 === 0 ? point.label : "",
   }));
 
   const label = range > 24 ? "Date" : "Hour";
 
   return (
-    <View
-      style={{
-        marginTop: 100,
-        paddingRight: 32,
-      }}
-    >
-      <Text
-        style={{
-          marginBottom: 10,
-        }}
-        numberOfLines={1}
-      >
+    <View style={styles.card}>
+      <Text style={styles.cardTitle} numberOfLines={1}>
         {title}
       </Text>
       <LineChart
-        data={chartData}
+        data={displayData}
         width={300}
         spacing={35}
         initialSpacing={30}
@@ -108,7 +106,7 @@ const SensorChart = ({
           transform: [{ rotate: "300deg" }],
         }}
       />
-      <Text style={{ textAlign: "center" }} numberOfLines={1}>
+      <Text style={[styles.caption, { textAlign: "center" }]} numberOfLines={1}>
         {label}
       </Text>
     </View>
@@ -209,7 +207,19 @@ export function DashboardScreen() {
     <View
       style={{ flex: 1, alignItems: "center", justifyContent: "flex-start" }}
     >
-      <Text style={{ fontSize: 32, marginTop: 100 }}>Dashboard Screen</Text>
+      <View style={styles.statusRow}>
+        <View
+          style={[
+            styles.statusDot,
+            connectedDevice
+              ? styles.statusDotConnected
+              : styles.statusDotDisconnected,
+          ]}
+        />
+        <Text style={styles.statusText}>
+          {connectedDevice ? "AirNode connected" : "AirNode disconnected"}
+        </Text>
+      </View>
       <View style={{ flexDirection: "row" }}>
         {rangeList.map((r) => (
           <RangeItem
@@ -220,12 +230,12 @@ export function DashboardScreen() {
           ></RangeItem>
         ))}
       </View>
-      <Pressable
-        onPress={handleCSVExport}
-        style={{ backgroundColor: "#80aee1", padding: 10, borderRadius: 8 }}
-      >
-        <Text style={{ color: "white", fontWeight: "bold" }}>Download CSV</Text>
+      <Pressable onPress={handleCSVExport} style={styles.csvButton}>
+        <Text style={styles.csvButtonText}>Download CSV</Text>
       </Pressable>
+      {!readings && (
+        <Text style={styles.errorText}>Data could not be loaded</Text>
+      )}
       <ScrollView>
         {sensorList.map((s) => (
           <SensorChart
@@ -241,9 +251,49 @@ export function DashboardScreen() {
   );
 }
 
+const ACCENT_COLOR = "#1A9E6E";
+const MINT_COLOR = "#38E8A0";
+const NEUTRAL_GRAY = "#6B7280";
+const ERROR_COLOR = "#FF6262";
+
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 32,
+    fontWeight: "600",
+    marginTop: 56,
+    marginBottom: 12,
+    color: "#1f2937",
+  },
+
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 24,
+    marginBottom: 16,
+  },
+
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+
+  statusDotConnected: {
+    backgroundColor: MINT_COLOR,
+  },
+
+  statusDotDisconnected: {
+    backgroundColor: "#9ca3af",
+  },
+
+  statusText: {
+    fontSize: 15,
+    color: NEUTRAL_GRAY,
+  },
+
   item: {
-    backgroundColor: "#00ffc8fd",
+    backgroundColor: "#e5e7eb",
     padding: 12,
     borderRadius: 20,
     alignSelf: "center",
@@ -251,10 +301,53 @@ const styles = StyleSheet.create({
   },
 
   activeItem: {
-    backgroundColor: "red",
+    backgroundColor: ACCENT_COLOR,
     padding: 12,
     borderRadius: 20,
     alignSelf: "center",
     paddingHorizontal: 20,
+  },
+
+  itemText: {
+    color: "#374151",
+  },
+
+  activeItemText: {
+    color: "white",
+    fontWeight: "600",
+  },
+
+  csvButton: {
+    backgroundColor: ACCENT_COLOR,
+    padding: 10,
+    borderRadius: 20,
+    marginBottom: 12,
+  },
+
+  csvButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  card: {
+    backgroundColor: "#FAFAFA",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    padding: 16,
+    marginTop: 24,
+  },
+
+  cardTitle: {
+    marginBottom: 10,
+    color: "#1F2937",
+  },
+
+  caption: {
+    color: NEUTRAL_GRAY,
+  },
+
+  errorText: {
+    color: ERROR_COLOR,
   },
 });
