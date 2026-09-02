@@ -9,6 +9,7 @@ import { sensorReading } from "../utils/sensorReading";
 import { readingsToCSV } from "../utils/csvExport";
 import { File, Paths } from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { downsampleData } from "../utils/downsampleData";
 
 type RangeProps = { name: string; onPress: () => void; isSelected: boolean };
 
@@ -67,10 +68,14 @@ const SensorChart = ({
 
   const chartData = readings?.map((r, index) => ({
     value: getValue(r),
-    label:
-      index % 4 == 0 && r.createdAt
-        ? formatLabel(new Date(r.createdAt), range)
-        : "",
+    label: r.createdAt ? formatLabel(new Date(r.createdAt), range) : "",
+  }));
+
+  const sampleData = downsampleData(chartData ?? []);
+
+  const displayData = sampleData.map((point, index) => ({
+    ...point,
+    label: index % 4 === 0 ? point.label : "",
   }));
 
   const label = range > 24 ? "Date" : "Hour";
@@ -91,7 +96,7 @@ const SensorChart = ({
         {title}
       </Text>
       <LineChart
-        data={chartData}
+        data={displayData}
         width={300}
         spacing={35}
         initialSpacing={30}
