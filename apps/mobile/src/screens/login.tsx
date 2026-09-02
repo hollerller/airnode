@@ -52,7 +52,7 @@ export function LoginScreen() {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        paddingBottom: 80,
+        paddingBottom: 120,
         gap: 20,
       }}
     >
