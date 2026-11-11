@@ -58,7 +58,37 @@ positions from P1.1 (kicad y goes down):
 so P4 is 48.26 up (1.9in) and 9.144 left of P1. looks like the arduino uno
 layout, need to double check against the kicad arduino template.
 
+P1.1 is net VIO in the DK schematic, P1.5 is V5V, P1.6 GND.
+
+## 5V pin power (nov 10)
+
+J2 usb -> D80 -> SW8 (power switch) -> U12 boost XC9148 -> V5V -> P1.5
+V5V also feeds the VDD buck (U11 XC9236, 3.0V)
+
+| limit | mA |
+|---|---|
+| usb J2 | 500 |
+| D80 IF | 500 |
+| XC9148 (5V out, 3.3V in) | 750 |
+
+shield load @5V: PMS <=100, BME680 module <15 -> ~115mA
+from usb ~140mA. works fine on the bench.
+
+## sensor modules on the shield (nov 10)
+
+both plug into female 2.54 headers on the shield.
+
+| module | header | used | not connected |
+|---|---|---|---|
+| BME680 (soldered) | 1x4 | GND, VCC, SDA, SCL | - |
+| PMSA003I (adafruit) | 1x7 | VIN, GND, SCL, SDA | 3Vo, RST, SET |
+
+adafruit board 51.0 x 35.5, mounting holes 2.5mm (M2.5), in line with the
+header row. from VIN center: -7.62 and +22.86 (measured -7.609 / +22.849),
+pins count up to +x. air goes out the side, keep that side clear.
+
+BME680 board 22 x 22, holes 3.2mm, no drawings found -> no screws, 5g, the
+header holds it. it also has 2 easyC connectors if i ever want a cable.
+
 todo:
-- max current on DK 5V pin
-- sensor connectors (headers vs stemma qt), mounting holes
 - shifter part (PCA9306 vs BSS138), JLC stock
