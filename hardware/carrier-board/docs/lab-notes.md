@@ -35,8 +35,30 @@ board needs:
 - pullups only on DK side, to VDD
 - SDA -> P0.26, SCL -> P0.27
 
+## DK header positions for the shield (nov 10)
+
+went through the DK hardware files (the pcb in kicad) to get the exact spots
+of the header pins i need. the arduino headers on the DK are smd female, each
+pin has two pads, so i took the middle point between them as the pin center.
+
+P1.1 (VDD) at x 108.179, y 129.134
+P4.1 (SCL) at x 99.035, y 80.874
+pitch 2.54, both headers count up to the right (+x)
+
+positions from P1.1 (kicad y goes down):
+
+| pin | signal | x | y |
+|---|---|---|---|
+| P1.1 | VDD | 0 | 0 |
+| P1.5 | 5V | +10.16 | 0 |
+| P1.6 | GND | +12.70 | 0 |
+| P4.1 | SCL (P0.27) | -9.144 | -48.26 |
+| P4.2 | SDA (P0.26) | -6.604 | -48.26 |
+
+so P4 is 48.26 up (1.9in) and 9.144 left of P1. looks like the arduino uno
+layout, need to double check against the kicad arduino template.
+
 todo:
-- DK header pinout (5V, VDD, GND, P0.26, P0.27)
 - max current on DK 5V pin
 - sensor connectors (headers vs stemma qt), mounting holes
 - shifter part (PCA9306 vs BSS138), JLC stock
