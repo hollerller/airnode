@@ -105,3 +105,18 @@ per channel: G -> VDD, S -> DK side (pullup to VDD), D -> sensor side
 
 assembly: SMD on top by JLC, headers hand soldered. male headers to the DK
 on the bottom, female headers for the modules on top.
+
+## pullups (nov 11)
+
+module pullups, measured unpowered, each module alone:
+BME680 10k, PMS 9.7k -> 4.92k in parallel on the 5V side.
+the 3.3k from the bench check included the shifter's 10k (4.92k || 10k = 3.30k).
+
+I2C spec, standard mode: VOL 0.4V, IOL 3mA, tr 1000ns, Cb guess 100pF
+
+| side | V | Rmin | Rmax | R |
+|---|---|---|---|---|
+| DK | 3.0 | 0.87k | 11.8k | 4.7k (mine) |
+| sensors | 5.0 | 1.53k | 11.8k | 4.92k (modules) |
+
+nRF pin sinks both sides when it pulls low: 0.64 + 1.0 = 1.66mA < 3mA
