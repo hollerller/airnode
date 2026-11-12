@@ -120,3 +120,18 @@ I2C spec, standard mode: VOL 0.4V, IOL 3mA, tr 1000ns, Cb guess 100pF
 | sensors | 5.0 | 1.53k | 11.8k | 4.92k (modules) |
 
 nRF pin sinks both sides when it pulls low: 0.64 + 1.0 = 1.66mA < 3mA
+
+## bom (nov 11)
+
+| ref | part | LCSC | JLC | qty |
+|---|---|---|---|---|
+| Q1, Q2 | BSS138P,215 SOT-23 | C75547 | extended | 2 |
+| R1, R2 | 4.7k 1% 0805 | C17673 | basic | 2 |
+| C1, C2 | 10uF 25V X5R 0805 | C15850 | basic | 2 |
+| J1 | male header to DK P1 | - | hand | 1 |
+| J2 | male header to DK P4 | - | hand | 1 |
+| J3 | female 1x4 (BME680) | - | hand | 1 |
+| J4 | female 1x7 (PMS) | - | hand | 1 |
+| H1, H2 | M2.5 holes (PMS) | - | - | 2 |
+
+C1, C2 next to the PMS header (adafruit board has no cap on VIN).
