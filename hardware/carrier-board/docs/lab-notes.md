@@ -90,5 +90,18 @@ pins count up to +x. air goes out the side, keep that side clear.
 BME680 board 22 x 22, holes 3.2mm, no drawings found -> no screws, 5g, the
 header holds it. it also has 2 easyC connectors if i ever want a cable.
 
-todo:
-- shifter part (PCA9306 vs BSS138), JLC stock
+## shifter (nov 10)
+
+2x BSS138, same circuit as the bench shifter. both options were extended at
+JLC, the PCA9306 was more parts and harder to hand solder.
+
+part: nexperia BSS138P,215, LCSC C75547, SOT-23
+- VGS(th) 0.9 / 1.2 / 1.5 V, gate at 3.0V -> ok
+- RDSon <= 2 ohm @ VGS 5V, bus is ~2mA -> doesn't matter
+- pins: 1 G, 2 S, 3 D
+
+per channel: G -> VDD, S -> DK side (pullup to VDD), D -> sensor side
+(module pullups to 5V)
+
+assembly: SMD on top by JLC, headers hand soldered. male headers to the DK
+on the bottom, female headers for the modules on top.
