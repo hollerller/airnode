@@ -162,3 +162,13 @@ J2 -> P4 (1x10)
 | 5-10 | P1.15 ... P1.10 | nc |
 
 VDD only from P1.1, the only one i checked is VIO in the DK schematic.
+
+## height under the shield (nov 11)
+
+P20 (male 1x13) and another male header sit under the shield, pins ~9mm tall.
+P4 female ~7mm (ruler). standard male header puts the shield at ~9.5mm ->
+touches, checked with a 1:1 print.
+
+shield needs to sit at ~11.5mm or more (9 + leg tails of J3/J4 + margin).
+going with long pin male headers for J1/J2, soldered ~2-3mm higher with a
+spacer. footprint stays the same (2.54, 1.0mm hole).
