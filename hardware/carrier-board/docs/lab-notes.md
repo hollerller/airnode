@@ -128,10 +128,37 @@ nRF pin sinks both sides when it pulls low: 0.64 + 1.0 = 1.66mA < 3mA
 | Q1, Q2 | BSS138P,215 SOT-23 | C75547 | extended | 2 |
 | R1, R2 | 4.7k 1% 0805 | C17673 | basic | 2 |
 | C1, C2 | 10uF 25V X5R 0805 | C15850 | basic | 2 |
-| J1 | male header to DK P1 | - | hand | 1 |
-| J2 | male header to DK P4 | - | hand | 1 |
+| J1 | male 1x8 to DK P1 | - | hand | 1 |
+| J2 | male 1x10 to DK P4 | - | hand | 1 |
 | J3 | female 1x4 (BME680) | - | hand | 1 |
 | J4 | female 1x7 (PMS) | - | hand | 1 |
 | H1, H2 | M2.5 holes (PMS) | - | - | 2 |
 
 C1, C2 next to the PMS header (adafruit board has no cap on VIN).
+
+## DK header pins on the shield (nov 11)
+
+J1 -> P1 (1x8)
+
+| pin | DK | shield |
+|---|---|---|
+| 1 | VDD | VDD |
+| 2 | VDD | nc |
+| 3 | RESET | nc |
+| 4 | VDD | nc |
+| 5 | 5V | 5V |
+| 6 | GND | GND |
+| 7 | GND | GND |
+| 8 | nc | nc |
+
+J2 -> P4 (1x10)
+
+| pin | DK | shield |
+|---|---|---|
+| 1 | P0.27 | SCL_3V |
+| 2 | P0.26 | SDA_3V |
+| 3 | P0.02 | nc |
+| 4 | GND | GND |
+| 5-10 | P1.15 ... P1.10 | nc |
+
+VDD only from P1.1, the only one i checked is VIO in the DK schematic.

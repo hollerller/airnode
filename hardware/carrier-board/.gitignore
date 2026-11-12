@@ -7,3 +7,9 @@ fp-info-cache
 
 # KiCad per-user local settings (window layout, visible layers)
 *.kicad_prl
+
+# KiCad local history
+.history/
+
+# reports written by the MCP server
+output/
