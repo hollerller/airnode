@@ -3682,6 +3682,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C15850"
+			(at 92.71 132.08 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "e5d200ca-5ef3-472b-a61d-37e7749cb05c")
 		)
@@ -3706,7 +3717,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "1a908344-3c6b-4784-af0a-d684833788fa")
 		(property "Reference" "J1"
@@ -3852,6 +3863,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 115.57 49.53 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C17673"
 			(at 115.57 49.53 0)
 			(hide yes)
 			(show_name no)
@@ -4042,7 +4064,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "442d0965-3324-43fc-9df0-0191ef30664c")
 		(property "Reference" "J4"
@@ -4263,6 +4285,17 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
+			(at 104.14 132.08 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C15850"
 			(at 104.14 132.08 0)
 			(hide yes)
 			(show_name no)
@@ -4510,6 +4543,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C75547"
+			(at 127 55.88 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "2"
 			(uuid "336604a8-3bab-4fc9-9e71-f3bf387acc49")
 		)
@@ -4537,7 +4581,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "68896621-b109-42b1-a6b3-2e6391969305")
 		(property "Reference" "J2"
@@ -4856,6 +4900,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C75547"
+			(at 175.26 55.88 90)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "1"
 			(uuid "21e3916c-d5e8-4b47-87fd-ebd8e454a893")
 		)
@@ -5165,6 +5220,17 @@
 			)
 		)
 		(property "Description" "Resistor"
+			(at 162.56 50.8 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C17673"
 			(at 162.56 50.8 0)
 			(hide yes)
 			(show_name no)
@@ -5512,7 +5578,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "fb25dbe3-81f5-4af1-8132-01c5a626ec02")
 		(property "Reference" "J3"
